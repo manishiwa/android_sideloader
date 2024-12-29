@@ -23,7 +23,10 @@ class AdbDeviceTracker {
       Function(List<String> devices) onDeviceChange
   ) async {
     try {
+      _setupExitHook();
+      await _deleteLockerInfo();
       _process = await Process.start(await _adbPath.adbPath, ['track-devices']);
+      await _persistLockerInfo(_process!.pid);
       debugPrint('Started tracking devices using adb track-devices.');
 
       _process!.stdout
@@ -108,5 +111,50 @@ class AdbDeviceTracker {
         // The device name and info are separated by `\t`
         .map((line) => line.split('\t').first)
         .toList();
+  }
+
+  void _setupExitHook() async {
+    final signals = [
+      // Shutdowns
+      ProcessSignal.sigint,
+      if (!Platform.isWindows) ProcessSignal.sigterm,
+      ProcessSignal.sighup,
+      ProcessSignal.sigquit,
+      ProcessSignal.sigkill,
+      // Crashes
+      ProcessSignal.sigabrt,
+      ProcessSignal.sigsegv,
+      ProcessSignal.sigill,
+      ProcessSignal.sigbus,
+    ];
+    for (var signal in signals) {
+      try {
+        signal.watch().listen((_) async {
+          debugPrint('Received termination signal ($signal). Stop tracking...');
+          await stopTracking();
+        });
+      } catch (ignored) {}
+    }
+  }
+
+  Future<void> _persistLockerInfo(int pid) async {
+    final file = await _getLockerFile();
+    await file.writeAsString("$pid");
+  }
+
+  Future<void> _deleteLockerInfo() async {
+    final file = await _getLockerFile();
+    final fileContents = await file.readAsString();
+    final pid = int.tryParse(fileContents);
+    if (pid != null) {
+      Process.killPid(pid);
+    }
+    await file.delete();
+  }
+
+  Future<File> _getLockerFile() async {
+    final directory = File(await _adbPath.adbPathDir);
+    final filePath = '${directory.path}${Platform.pathSeparator}locker';
+    return await File(filePath).create();
   }
 }

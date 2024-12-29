@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:android_sideloader/adb/adb_process_killer.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:window_manager/window_manager.dart';
@@ -26,6 +27,8 @@ void main() async {
       await windowManager.focus();
     },
   );
+
+  windowManager.addListener(AdbProcessKiller());
 
   runApp(const SideloaderApp());
 }

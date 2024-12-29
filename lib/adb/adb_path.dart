@@ -9,9 +9,20 @@ class AdbPath {
   factory AdbPath() => instance;
 
   Future<String>? _adbPath;
-
   Future<String> get adbPath async {
     return _adbPath ??= _initializeAdbPath();
+  }
+
+  Future<String>? _adbPathDir;
+  Future<String> get adbPathDir async {
+    return _adbPathDir ??= _initializeAdbPathDir();
+  }
+
+  Future<String> _initializeAdbPathDir() async {
+    final Directory tempDir = await getTemporaryDirectory();
+    final path = p.normalize('${tempDir.path}/android_sideloader');
+    final dir = await Directory(path).create(recursive: true);
+    return dir.path;
   }
 
   Future<String> _initializeAdbPath() async {
@@ -40,8 +51,7 @@ class AdbPath {
   }
 
   Future<File> _unpackageAsset(String assetPath) async {
-    final Directory tempDir = await getTemporaryDirectory();
-    final path = p.normalize('${tempDir.path}/android_sideloader/$assetPath');
+    final path = p.normalize('${await adbPathDir}/$assetPath');
     final file = await File(path).create(recursive: true);
     final asset = await rootBundle.load(assetPath);
     return file.writeAsBytes(asset.buffer.asUint8List());

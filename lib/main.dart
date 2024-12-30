@@ -18,7 +18,6 @@ void main() async => await Log.init(level: Level.all, () async {
     const WindowOptions(
       title: "App Sideloader",
       size: Size(800, 600),
-      center: true,
       maximumSize: Size(1200, 900),
       minimumSize: Size(800, 600),
     ),

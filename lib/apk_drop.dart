@@ -1,6 +1,8 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 
+import 'log.dart';
+
 class DragAndDropApk extends StatefulWidget {
   final Widget child;
   final Function(String) onApkDropped;
@@ -20,16 +22,19 @@ class _DragAndDropApkState extends State<DragAndDropApk> {
   Widget build(BuildContext context) {
     return DropTarget(
       onDragEntered: (details) {
+        Log.d("onDragEntered");
         setState(() {
           _isDragging = true;
         });
       },
       onDragExited: (details) {
+        Log.d("onDragExited");
         setState(() {
           _isDragging = false;
         });
       },
       onDragDone: (details) async {
+        Log.d("onDragDone");
         if (details.files.isNotEmpty) {
           final file = details.files.first;
           if (file.name.toLowerCase().endsWith('.apk')) {
@@ -37,6 +42,8 @@ class _DragAndDropApkState extends State<DragAndDropApk> {
           } else {
             _handleInvalidFileDropped();
           }
+        } else {
+          Log.w("Dropped empty files list");
         }
       },
       child: Stack(
@@ -83,6 +90,7 @@ class _DragAndDropApkState extends State<DragAndDropApk> {
   }
 
   void _handleApkDropped(String filePath) {
+    Log.i("APK file dropped: $filePath");
     widget.onApkDropped(filePath);
     setState(() {
       _isDragging = false;
@@ -90,6 +98,7 @@ class _DragAndDropApkState extends State<DragAndDropApk> {
   }
 
   void _handleInvalidFileDropped() {
+    Log.w("Invalid file dropped");
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

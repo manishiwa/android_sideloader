@@ -1,17 +1,17 @@
 import 'dart:io';
-
-import 'package:android_sideloader/adb/adb_process_killer.dart';
+import 'package:android_sideloader/log.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:logger/logger.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'adb/adb.dart';
 import 'apk_drop.dart';
 import 'device_list_widget.dart';
 
-void main() async {
+void main() async => await Log.init(level: Level.all, () async {
+  Log.i("Logging initialized. Starting app...");
   WidgetsFlutterBinding.ensureInitialized();
-
   await windowManager.ensureInitialized();
 
   windowManager.waitUntilReadyToShow(
@@ -28,10 +28,8 @@ void main() async {
     },
   );
 
-  windowManager.addListener(AdbProcessKiller());
-
   runApp(const SideloaderApp());
-}
+});
 
 class SideloaderApp extends StatelessWidget {
   const SideloaderApp({super.key});
@@ -76,8 +74,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _selectedFile;
   bool get _isButtonEnabled => _selectedDevice != null && _selectedFile != null;
 
-  final Adb _adb = Adb();
-
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -87,17 +83,21 @@ class _HomeScreenState extends State<HomeScreen> {
     if (result != null && result.files.single.path != null) {
       setState(() {
         _selectedFile = result.files.single.path!;
+        Log.i("Selected APK file $_selectedFile");
       });
+    } else {
+      Log.w("Did not pick good file: $result");
     }
   }
 
   Future<void> _installAPK() async {
     final selectedFile = _selectedFile;
     if (selectedFile == null || _selectedDevice == null) return;
-    _adb.installAPK(
+    Adb.installAPK(
       device: _selectedDevice,
       filePath: selectedFile,
       onSuccess: (outText) {
+        Log.i("Successfully installed APK file $_selectedFile:\n$outText");
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -107,6 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       },
       onFailure: (errorMessage) {
+        Log.w("Failed to install APK file $_selectedFile:\n$errorMessage");
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -120,7 +121,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return DragAndDropApk(
       onApkDropped: (String s) {
         setState(() => _selectedFile = s );
@@ -136,6 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             DeviceListWidget(
               onDeviceSelected: (device) {
+                Log.i("Selected device $device");
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   setState(() => _selectedDevice = device);
                 });

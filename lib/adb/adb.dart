@@ -1,31 +1,28 @@
-import 'package:flutter/widgets.dart';
+import 'package:android_sideloader/log.dart';
 import 'package:process_run/process_run.dart';
 import 'adb_path.dart';
 
 class Adb {
-  Adb._internal();
-  static final Adb instance = Adb._internal();
-  factory Adb() => instance;
+  static final _shell = (() async => Shell(
+    workingDirectory: await AdbPath.adbWorkingDirectoryPath,
+  ))();
 
-  final _shell = Shell();
-  final _adbPath = AdbPath();
-
-  Future<void> installAPK({
+  static Future<void> installAPK({
     required String filePath,
     String? device,
     required void Function(String outText) onSuccess,
     required void Function(String errorMessage) onFailure,
   }) async {
     try {
-      final result = await _shell.run(
-          '${await _adbPath.adbPath} '
+      final result = await (await _shell).run(
+          '${await AdbPath.adbPath} '
           '${device != null ? "-s $device " : ""}'
           'install $filePath'
       );
-      debugPrint(result.outText);
+      Log.i(result.outText);
       onSuccess(result.outText);
     } catch (e) {
-      debugPrint("Error: $e");
+      Log.e("Error installing APK", error: e);
       onFailure("Error: $e");
     }
   }

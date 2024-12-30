@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/widgets.dart';
+import 'package:android_sideloader/file_path.dart';
+import '../log.dart';
 import 'adb_path.dart';
+import '../on_app_exit.dart';
 
 class AdbDeviceTracker {
-  AdbDeviceTracker._internal();
+  AdbDeviceTracker._internal() {
+    OnAppExit.listen(() => stopTracking());
+  }
   static final AdbDeviceTracker instance = AdbDeviceTracker._internal();
   factory AdbDeviceTracker() => instance;
-
-  final _adbPath = AdbPath();
 
   final StreamController<List<String>> _deviceStreamController =
       StreamController<List<String>>();
@@ -23,16 +25,17 @@ class AdbDeviceTracker {
       Function(List<String> devices) onDeviceChange
   ) async {
     try {
-      _setupExitHook();
       await _deleteLockerInfo();
-      _process = await Process.start(await _adbPath.adbPath, ['track-devices']);
+      _process = await Process.start(await AdbPath.adbPath, ['track-devices']);
       await _persistLockerInfo(_process!.pid);
-      debugPrint('Started tracking devices using adb track-devices.');
+      Log.i('Started tracking devices using adb track-devices.');
 
       _process!.stdout
           .transform(utf8.decoder)
           .listen((lines) {
+            Log.d("Raw `track-devices` string: '''$lines'''");
             final connectedDevices = _parseConnectedDevicesFromOutput(lines);
+            Log.d("Detected connected devices: $connectedDevices");
 
             if (!_equalLists(connectedDevices, _connectedDevices)) {
               _connectedDevices = connectedDevices;
@@ -44,15 +47,15 @@ class AdbDeviceTracker {
       _process!.stderr
           .transform(utf8.decoder)
           .listen((error) {
-            debugPrint("ADB Error: $error");
+            Log.e("ADB Error", error: error);
           });
 
       _process!.exitCode.then((code) {
-        debugPrint('ADB track-devices process exited with code $code.');
+        Log.e('ADB track-devices process exited with code $code.');
         stopTracking();
       });
     } catch (e) {
-      debugPrint('Error starting adb track-devices: $e');
+      Log.e('Error starting adb track-devices', error: e);
       await stopTracking();
     }
   }
@@ -62,7 +65,7 @@ class AdbDeviceTracker {
     _process?.kill();
     _process = null;
     await _deviceStreamController.close();
-    debugPrint('Stopped tracking devices.');
+    Log.i('Stopped tracking devices.');
   }
 
   /// Returns a broadcast Stream to allow UI subscription for device updates
@@ -113,33 +116,10 @@ class AdbDeviceTracker {
         .toList();
   }
 
-  void _setupExitHook() async {
-    final signals = [
-      // Shutdowns
-      ProcessSignal.sigint,
-      if (!Platform.isWindows) ProcessSignal.sigterm,
-      ProcessSignal.sighup,
-      ProcessSignal.sigquit,
-      ProcessSignal.sigkill,
-      // Crashes
-      ProcessSignal.sigabrt,
-      ProcessSignal.sigsegv,
-      ProcessSignal.sigill,
-      ProcessSignal.sigbus,
-    ];
-    for (var signal in signals) {
-      try {
-        signal.watch().listen((_) async {
-          debugPrint('Received termination signal ($signal). Stop tracking...');
-          await stopTracking();
-        });
-      } catch (ignored) {}
-    }
-  }
-
   Future<void> _persistLockerInfo(int pid) async {
     final file = await _getLockerFile();
     await file.writeAsString("$pid");
+    Log.d("Persisted ADB lock information");
   }
 
   Future<void> _deleteLockerInfo() async {
@@ -147,14 +127,12 @@ class AdbDeviceTracker {
     final fileContents = await file.readAsString();
     final pid = int.tryParse(fileContents);
     if (pid != null) {
-      Process.killPid(pid);
+      final didKill = Process.killPid(pid);
+      Log.d("Killed old ADB process ($pid): $didKill");
     }
     await file.delete();
+    Log.d("Deleted ADB lock information");
   }
 
-  Future<File> _getLockerFile() async {
-    final directory = File(await _adbPath.adbPathDir);
-    final filePath = '${directory.path}${Platform.pathSeparator}locker';
-    return await File(filePath).create();
-  }
+  Future<File> _getLockerFile() async => await FilePath.getFile('locker');
 }

@@ -1,31 +1,22 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+import 'package:android_sideloader/file_path.dart';
+import '../log.dart';
 
 class AdbPath {
-  AdbPath._internal();
-  static final AdbPath instance = AdbPath._internal();
-  factory AdbPath() => instance;
+  static Future<String> get adbPath async => (await adbFile).path;
 
-  Future<String>? _adbPath;
-  Future<String> get adbPath async {
-    return _adbPath ??= _initializeAdbPath();
+  static Future<Directory> get adbWorkingDirectory async =>
+    (await adbFile).parent;
+
+  static Future<String> get adbWorkingDirectoryPath async =>
+    (await adbWorkingDirectory).path;
+
+  static Future<File>? _adbFile;
+  static Future<File> get adbFile async {
+    return _adbFile ??= _initializeAdbFile();
   }
 
-  Future<String>? _adbPathDir;
-  Future<String> get adbPathDir async {
-    return _adbPathDir ??= _initializeAdbPathDir();
-  }
-
-  Future<String> _initializeAdbPathDir() async {
-    final Directory tempDir = await getTemporaryDirectory();
-    final path = p.normalize('${tempDir.path}/android_sideloader');
-    final dir = await Directory(path).create(recursive: true);
-    return dir.path;
-  }
-
-  Future<String> _initializeAdbPath() async {
+  static Future<File> _initializeAdbFile() async {
     final adbAssetPath = "assets/adb/${
         Platform.isWindows ? "adb.exe" :
         Platform.isLinux ? "adb-linux" :
@@ -35,25 +26,21 @@ class AdbPath {
         )
     }";
 
-    final adbFile = await _unpackageAsset(adbAssetPath);
+    final adbFile = await FilePath.extractAsset(adbAssetPath);
 
     if (Platform.isWindows) {
       // Windows needs some extra files
-      await _unpackageAsset("assets/adb/AdbWinApi.dll");
-      await _unpackageAsset("assets/adb/AdbWinUsbApi.dll");
-      await _unpackageAsset("assets/adb/libusb-1.0.dll");
+      Log.d("Extracting additional Windows files");
+      await FilePath.extractAsset("assets/adb/AdbWinApi.dll");
+      await FilePath.extractAsset("assets/adb/AdbWinUsbApi.dll");
+      await FilePath.extractAsset("assets/adb/libusb-1.0.dll");
     } else {
       // Mac and Linux need to make adb executable
+      Log.d("Giving executable access to ADB");
       await Process.run('chmod', ['+x', adbFile.path]);
     }
 
-    return adbFile.path;
-  }
-
-  Future<File> _unpackageAsset(String assetPath) async {
-    final path = p.normalize('${await adbPathDir}/$assetPath');
-    final file = await File(path).create(recursive: true);
-    final asset = await rootBundle.load(assetPath);
-    return file.writeAsBytes(asset.buffer.asUint8List());
+    Log.d("Initialized ADB file: ${adbFile.path}");
+    return adbFile;
   }
 }

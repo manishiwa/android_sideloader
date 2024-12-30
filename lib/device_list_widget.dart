@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'adb/adb_device_tracker.dart';
+import 'log.dart';
 
 class DeviceListWidget extends StatefulWidget {
   final void Function(String? selectedDevice) onDeviceSelected;
@@ -19,7 +20,7 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
   void initState() {
     super.initState();
     _tracker.startTracking((devices) {
-      debugPrint('Connected devices updated: $devices');
+      Log.d('Connected devices updated: $devices');
     });
   }
 
@@ -52,6 +53,7 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
                 initialData: const [],
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
+                    Log.e('Snapshot error for devices: ${snapshot.error}');
                     return Center(
                       child: Text('Error: ${snapshot.error}'),
                     );
@@ -60,6 +62,7 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
 
                   if (devices.isEmpty) {
                     _selectedDevice = null;
+                    Log.d('Devices empty on build. Set selected null.');
                     widget.onDeviceSelected.call(null);
                     return const Center(
                         child: Text(
@@ -70,9 +73,11 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
                   } else {
                     if (_selectedDevice == null) {
                       _selectedDevice = devices.first;
+                      Log.d('First device connected. Setting selected.');
                       widget.onDeviceSelected.call(_selectedDevice);
                     }
                     if (!devices.contains(_selectedDevice)) {
+                      Log.d('Selected device removed. Setting to null.');
                       _selectedDevice = null;
                       widget.onDeviceSelected.call(null);
                     }
@@ -87,6 +92,7 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
                         onTap: () {
                           widget.onDeviceSelected.call(device);
                           setState(() {
+                            Log.d('User selected device: $device');
                             _selectedDevice = device;
                           });
                         },

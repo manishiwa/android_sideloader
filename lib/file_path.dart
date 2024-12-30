@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:android_sideloader/extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -24,15 +25,21 @@ class FilePath {
   }
 
   static Future<File> getFile(String newPath) async {
-    final ret = await File(p.normalize('${await path}/$newPath'))
-        .create(recursive: true);
-    Log.d("Getting / creating file: ${ret.path}");
-    return ret;
+    final file = File(p.normalize('${await path}/$newPath'));
+    if (!await file.exists()) {
+      await file.create(recursive: true);
+    }
+    Log.d("Getting / creating file: ${file.path}");
+    return file;
   }
 
   static Future<File> extractAsset(String assetPath) async {
     final file = await getFile(assetPath);
     final asset = await rootBundle.load(assetPath);
+    if (await file.isEqualToByteData(asset)) {
+      Log.i("Asset already exists: $assetPath");
+      return file;
+    }
     final ret = await file.writeAsBytes(asset.buffer.asUint8List());
     Log.d("Extracted asset: ${ret.path}");
     return ret;

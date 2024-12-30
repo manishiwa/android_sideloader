@@ -93,7 +93,7 @@ class AdbDeviceTracker {
         // start of an output by its having 4 hexadecimal characters at the
         // beginning of a line. This is the payload size indicator for that
         // output. We only care about the most recent output.
-        .split(r"\n[0-9a-fA-F]{4}").last
+        .split(RegExp(r"\n[0-9a-fA-F]{4}")).last
         // Remove the output payload size characters
         .substring(4)
         // Remove empty lines

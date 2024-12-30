@@ -15,12 +15,15 @@ class DeviceListWidget extends StatefulWidget {
 class _DeviceListWidgetState extends State<DeviceListWidget> {
   final AdbDeviceTracker _tracker = AdbDeviceTracker();
   String? _selectedDevice;
+  List<String> _devices = [];
 
   @override
   void initState() {
     super.initState();
     _tracker.startTracking((devices) {
-      Log.d('Connected devices updated: $devices');
+      setState(() {
+        _devices = devices;
+      });
     });
   }
 
@@ -48,22 +51,14 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
               ),
             ),
             Expanded(
-              child: StreamBuilder<List<String>>(
-                stream: _tracker.deviceStream,
-                initialData: const [],
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    Log.e('Snapshot error for devices: ${snapshot.error}');
-                    return Center(
-                      child: Text('Error: ${snapshot.error}'),
-                    );
-                  }
-                  final devices = snapshot.data ?? [];
-
-                  if (devices.isEmpty) {
-                    _selectedDevice = null;
-                    Log.d('Devices empty on build. Set selected null.');
-                    widget.onDeviceSelected.call(null);
+              child: Builder(
+                builder: (context) {
+                  if (_devices.isEmpty) {
+                    if (_selectedDevice != null) {
+                      _selectedDevice = null;
+                      Log.d('Devices empty on build. Set selected null.');
+                      widget.onDeviceSelected.call(null);
+                    }
                     return const Center(
                         child: Text(
                           'No devices connected\n\nPlease connect your device',
@@ -72,21 +67,21 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
                     );
                   } else {
                     if (_selectedDevice == null) {
-                      _selectedDevice = devices.first;
+                      _selectedDevice = _devices.first;
                       Log.d('First device connected. Setting selected.');
                       widget.onDeviceSelected.call(_selectedDevice);
                     }
-                    if (!devices.contains(_selectedDevice)) {
-                      Log.d('Selected device removed. Setting to null.');
-                      _selectedDevice = null;
-                      widget.onDeviceSelected.call(null);
+                    if (!_devices.contains(_selectedDevice)) {
+                      Log.d('Selected device removed. Setting to first device');
+                      _selectedDevice = _devices.first;
+                      widget.onDeviceSelected.call(_selectedDevice);
                     }
                   }
 
                   return ListView.builder(
-                    itemCount: devices.length,
+                    itemCount: _devices.length,
                     itemBuilder: (context, index) {
-                      final device = devices[index];
+                      final device = _devices[index];
                       final isSelected = device == _selectedDevice;
                       return GestureDetector(
                         onTap: () {

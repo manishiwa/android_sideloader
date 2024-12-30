@@ -13,9 +13,6 @@ class AdbDeviceTracker {
   static final AdbDeviceTracker instance = AdbDeviceTracker._internal();
   factory AdbDeviceTracker() => instance;
 
-  final StreamController<List<String>> _deviceStreamController =
-      StreamController<List<String>>();
-
   Process? _process;
   List<String> _connectedDevices = [];
 
@@ -40,7 +37,6 @@ class AdbDeviceTracker {
             if (!_equalLists(connectedDevices, _connectedDevices)) {
               _connectedDevices = connectedDevices;
               onDeviceChange(_connectedDevices);
-              _deviceStreamController.add(_connectedDevices);
             }
           });
 
@@ -56,20 +52,16 @@ class AdbDeviceTracker {
       });
     } catch (e) {
       Log.e('Error starting adb track-devices', error: e);
-      await stopTracking();
+      stopTracking();
     }
   }
 
   /// Stops the process and cleans up resources
-  Future<void> stopTracking() async {
+  void stopTracking() {
     _process?.kill();
     _process = null;
-    await _deviceStreamController.close();
     Log.i('Stopped tracking devices.');
   }
-
-  /// Returns a broadcast Stream to allow UI subscription for device updates
-  Stream<List<String>> get deviceStream => _deviceStreamController.stream;
 
   /// Helper to compare two device lists
   bool _equalLists(List<String> a, List<String> b) {

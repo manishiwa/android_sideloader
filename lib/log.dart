@@ -41,14 +41,24 @@ class Log {
 
     // Temporary in-memory logger until the log file is created
     final memoryLogOutput = _MemoryLogOutput();
-    _log = Logger(printer: hybrid, output: memoryLogOutput, level: level);
+    _log = Logger(
+      filter: ProductionFilter(),
+      printer: hybrid,
+      output: memoryLogOutput,
+      level: level,
+    );
     await _log.init;
 
     final fullOutput = MultiOutput([
       ConsoleOutput(),
       FileOutput(file: await FilePath.getFile("log.txt")),
     ]);
-    _log = Logger(printer: hybrid, output: fullOutput, level: level);
+    _log = Logger(
+        filter: ProductionFilter(),
+        printer: hybrid,
+        output: fullOutput,
+        level: level
+    );
     await _log.init;
     memoryLogOutput.flushTo(fullOutput);
 

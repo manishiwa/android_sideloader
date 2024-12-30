@@ -24,7 +24,8 @@ class FilePath {
   }
 
   static Future<File> getFile(String newPath) async {
-    final ret = await File(p.normalize('${await path}/$newPath')).create();
+    final ret = await File(p.normalize('${await path}/$newPath'))
+        .create(recursive: true);
     Log.d("Getting / creating file: ${ret.path}");
     return ret;
   }

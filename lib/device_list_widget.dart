@@ -16,15 +16,19 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
   final AdbDeviceTracker _tracker = AdbDeviceTracker();
   String? _selectedDevice;
   List<String> _devices = [];
+  bool _isListeningStarted = false;
 
   @override
   void initState() {
     super.initState();
-    _tracker.startTracking((devices) {
-      setState(() {
-        _devices = devices;
-      });
-    });
+    _tracker.startTracking(
+      onDeviceChange: (devices) {
+        setState(() {
+          _devices = devices;
+          _isListeningStarted = true;
+        });
+      },
+    );
   }
 
   @override
@@ -53,6 +57,11 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
             Expanded(
               child: Builder(
                 builder: (context) {
+                  if (!_isListeningStarted) {
+                    return const Center(
+                        child: CircularProgressIndicator()
+                    );
+                  }
                   if (_devices.isEmpty) {
                     if (_selectedDevice != null) {
                       _selectedDevice = null;

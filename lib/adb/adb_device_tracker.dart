@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:android_sideloader/file_path.dart';
 import '../log.dart';
-import 'adb_path.dart';
 import '../on_app_exit.dart';
+import 'adb_path.dart';
 
 class AdbDeviceTracker {
   AdbDeviceTracker._internal() {
@@ -14,16 +14,25 @@ class AdbDeviceTracker {
   factory AdbDeviceTracker() => instance;
 
   Process? _process;
-  List<String> _connectedDevices = [];
+  List<String>? _connectedDevices;
 
   /// Starts the adb `track-devices` process and pushes updates to the provided
   /// callback function.
-  Future<void> startTracking(
-      Function(List<String> devices) onDeviceChange
-  ) async {
+  Future<void> startTracking({
+    required Function(List<String> devices) onDeviceChange,
+  }) async {
+    if (_process != null) {
+      throw Exception(
+          "You must call `stopTracking` before calling `startTracking` again!"
+      );
+    }
     try {
       await _deleteLockerInfo();
-      _process = await Process.start(await AdbPath.adbPath, ['track-devices']);
+      _process = await Process.start(
+          (await AdbPath.adbFile).path,
+          ['track-devices'],
+          workingDirectory: (await AdbPath.adbFile).parent.path
+      );
       await _persistLockerInfo(_process!.pid);
       Log.i('Started tracking devices using adb track-devices.');
 
@@ -36,7 +45,7 @@ class AdbDeviceTracker {
 
             if (!_equalLists(connectedDevices, _connectedDevices)) {
               _connectedDevices = connectedDevices;
-              onDeviceChange(_connectedDevices);
+              onDeviceChange(connectedDevices);
             }
           });
 
@@ -64,7 +73,13 @@ class AdbDeviceTracker {
   }
 
   /// Helper to compare two device lists
-  bool _equalLists(List<String> a, List<String> b) {
+  bool _equalLists(List<String>? a, List<String>? b) {
+    if (a == null && b == null) {
+      return true;
+    }
+    if (a == null || b == null) {
+      return false;
+    }
     if (a.length != b.length) return false;
     for (int i = 0; i < a.length; i++) {
       if (a[i] != b[i]) return false;

@@ -20,7 +20,7 @@ class AdbPath {
     final adbAssetPath = "assets/adb/${
         Platform.isWindows ? "adb.exe" :
         Platform.isLinux ? "adb-linux" :
-        Platform.isMacOS ? "adb-mac-intel" :
+        Platform.isMacOS ? "adb-mac" :
         throw UnsupportedError(
             'Unsupported platform: ${Platform.operatingSystem}'
         )

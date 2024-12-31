@@ -29,7 +29,7 @@ class SaveLogButton extends StatelessWidget {
               },
             );
           },
-          icon: const Icon(Icons.file_copy)
+          icon: const Icon(Icons.bug_report_rounded)
       ),
     );
   }

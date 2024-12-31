@@ -91,36 +91,53 @@ class AdbDeviceTracker {
   /// ```
   ///   XXXXDEVICEID  INFO
   /// ```
-  /// Where the first 4 characters are the size of the following payload.
-  /// Device IDs cannot start with a number. There is a `\t` between the
-  /// device ID and the info.
+  /// Where the first 4 characters are the size of the following payload, and
+  /// the gap is a `\t`.
   ///
   /// There can be multiple devices per payload. Example:
   ///
   /// ```
-  /// 0026SN078C10027323	device
-  ///
-  /// fcd41e7b	device
+  /// 0026SN078C10027323  device
+  /// fcd41e7 device
   /// ```
+  ///
+  /// Connected devices have `device` as the INFO
   List<String> _parseConnectedDevicesFromOutput(String lines) {
-    return lines
-        // Multiple outputs are occasionally sent at once. We can detect the
-        // start of an output by its having 4 hexadecimal characters at the
-        // beginning of a line. This is the payload size indicator for that
-        // output. We only care about the most recent output.
-        .split(RegExp(r"\n(?=[0-9a-fA-F]{4})")).last
-        // Remove the output payload size characters
-        .substring(4)
-        // Remove empty lines
-        .trim()
-        // Each device has its own line, so we split by newline.
+    final cleanLines = _cleanOutput(lines);
+    final payload = _getLatestPayload(cleanLines);
+    Log.d("Latest payload is $payload");
+    return payload
         .split("\n")
         .map((line) => line.trim())
-        // Connected devices have `device` as the info
         .where((line) => line.isNotEmpty && line.contains('\tdevice'))
-        // The device name and info are separated by `\t`
         .map((line) => line.split('\t').first)
         .toList();
+  }
+
+  /// Remove redundant newline characters that are not counted in payload size
+  String _cleanOutput(String lines) {
+    return lines.split(RegExp(r"[\n\r]")).where((e) => e.isNotEmpty).join("\n");
+  }
+
+  /// Use the payload size to get the actual payload. If there is more after
+  /// the payload ends, check to see if there is an additional payload and
+  /// use that instead, recursively.
+  String _getLatestPayload(String lines) {
+    if (lines.length < 4) {
+      return "";
+    }
+    final payloadSize = int.tryParse(lines.substring(0, 4), radix: 16);
+    if (payloadSize == null || payloadSize <= 0) {
+      return "";
+    }
+    final payload = lines.substring(4);
+    if (payload.length > payloadSize) {
+      final nextPayload = _getLatestPayload(payload.substring(payloadSize));
+      if (nextPayload.isNotEmpty) {
+        return nextPayload;
+      }
+    }
+    return payload;
   }
 
   Future<void> _persistLockerInfo(int pid) async {

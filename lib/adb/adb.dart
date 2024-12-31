@@ -21,9 +21,15 @@ class Adb {
       );
       Log.i("Successfully installed APK:\n${result.outText}");
       onSuccess(result.outText);
-    } catch (e) {
-      Log.e("Error installing APK", error: e);
-      onFailure("Error: $e");
+    } on ShellException catch (shellException, stackTrace) {
+      Log.e(
+        "Error installing APK.\n"
+          "* stdout:\n${shellException.result?.outText}\n" 
+          "* stderr:\n${shellException.result?.errText}", 
+        error: shellException, 
+        stackTrace: stackTrace
+      );
+      onFailure("Error: $shellException");
     }
   }
 
@@ -35,8 +41,14 @@ class Adb {
       );
       Log.i("Successfully killed ADB server:\n${result.outText}");
       return true;
-    } catch (e) {
-      Log.e("Error killing ADB server", error: e);
+    } on ShellException catch (shellException, stackTrace) {
+      Log.e(
+          "Error starting ADB server.\n"
+            "* stdout:\n${shellException.result?.outText}\n"
+            "* stderr:\n${shellException.result?.errText}",
+          error: shellException,
+          stackTrace: stackTrace
+      );
       return false;
     }
   }
@@ -49,8 +61,14 @@ class Adb {
       );
       Log.i("Successfully started ADB server:\n${result.outText}");
       return true;
-    } catch (e) {
-      Log.e("Error starting ADB server", error: e);
+    } on ShellException catch (shellException, stackTrace) {
+      Log.e(
+        "Error starting ADB server.\n"
+          "* stdout:\n${shellException.result?.outText}\n" 
+          "* stderr:\n${shellException.result?.errText}", 
+        error: shellException, 
+        stackTrace: stackTrace
+      );
       return false;
     }
   }

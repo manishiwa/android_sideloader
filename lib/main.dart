@@ -3,6 +3,7 @@ import 'package:android_sideloader/log.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:logger/logger.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
 
 import 'adb/adb.dart';
@@ -117,6 +118,15 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _launchHelpURL() async {
+    final Uri url = Uri.parse(
+      'https://github.com/ryan-andrew/android_sideloader?tab=readme-ov-file#android-sideloader'
+    );
+    if (!await launchUrl(url)) {
+      throw 'Could not launch $url';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return DragAndDropApk(
@@ -126,7 +136,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         floatingActionButton: IconButton(
             onPressed: () {
-
+              _launchHelpURL();
             },
             icon: const Icon(Icons.help)
         ),

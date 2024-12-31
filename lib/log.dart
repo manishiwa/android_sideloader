@@ -29,7 +29,7 @@ class Log {
 
   static Future<void> init(
     Function entrypoint, {Level level = Level.all}
-  ) async => _setupUncaughtExceptionLogging(() async {
+  ) async => await _setupUncaughtExceptionLogging(() async {
     final pretty = PrettyPrinter(
       stackTraceBeginIndex: 1,
       errorMethodCount: 16,
@@ -69,6 +69,7 @@ class Log {
   static _setupUncaughtExceptionLogging(Function entrypoint) {
     runZonedGuarded(
       () async {
+        WidgetsFlutterBinding.ensureInitialized();
         FlutterError.onError = (FlutterErrorDetails details) {
           _log.e(
               "Uncaught Flutter framework exception",

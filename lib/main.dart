@@ -11,7 +11,6 @@ import 'device_list_widget.dart';
 
 void main() async => await Log.init(level: Level.all, () async {
   Log.i("Logging initialized. Starting app...");
-  WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
 
   windowManager.waitUntilReadyToShow(

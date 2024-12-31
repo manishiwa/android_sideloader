@@ -15,9 +15,9 @@ class Adb {
   }) async {
     try {
       final result = await (await _shell).run(
-        '${await AdbPath.adbPath} '
+        '"${await AdbPath.adbPath}" '
         '${device != null ? "-s $device " : ""}'
-        'install $filePath'
+        'install "$filePath"'
       );
       Log.i("Successfully installed APK:\n${result.outText}");
       onSuccess(result.outText);
@@ -30,7 +30,7 @@ class Adb {
   static Future<bool> killServer() async {
     try {
       final result = await (await _shell).run(
-        '${await AdbPath.adbPath} '
+        '"${await AdbPath.adbPath}" '
         'kill-server'
       );
       Log.i("Successfully killed ADB server:\n${result.outText}");
@@ -44,7 +44,7 @@ class Adb {
   static Future<bool> startServer() async {
     try {
       final result = await (await _shell).run(
-        '${await AdbPath.adbPath} '
+        '"${await AdbPath.adbPath}" '
         'start-server'
       );
       Log.i("Successfully started ADB server:\n${result.outText}");

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:android_sideloader/util/extensions.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -85,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return DragAndDropApk(
       onApkDropped: (String s) {
         setState(() => _selectedFile = s );
@@ -127,8 +129,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: _selectedFile == null
-                          ? Colors.red
-                          : Colors.green,
+                          ? Colors.red.lerp(theme.colorScheme.onSurface, 0.3)
+                          : Colors.green.lerp(theme.colorScheme.onSurface, 0.3),
                       ),
                     ),
                     const SizedBox(height: 40),

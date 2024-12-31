@@ -24,3 +24,7 @@ extension FileExtensions on File {
     return await computeFileHash() == dataHash;
   }
 }
+
+extension ColorExtensions on Color {
+  Color? lerp(Color other, double t) => Color.lerp(this, other, t);
+}

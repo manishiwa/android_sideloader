@@ -20,7 +20,7 @@ installing drivers** - you don't even install this app! Just download and run.
 
 #### See it in action:
 
-<img src="docs/videos/demo.gif" alt="See it in action" width="800"/>
+<img src="docs/videos/demo2.gif" alt="See it in action" width="800"/>
 
 ## Downloading
 

@@ -1,10 +1,11 @@
+import 'package:android_sideloader/adb/adb_device.dart';
 import 'package:flutter/material.dart';
 
 import 'adb/adb_device_tracker.dart';
 import 'logs/log.dart';
 
 class DeviceListWidget extends StatefulWidget {
-  final void Function(String? selectedDevice) onDeviceSelected;
+  final void Function(AdbDevice? selectedDevice) onDeviceSelected;
 
   const DeviceListWidget({super.key, required this.onDeviceSelected});
 
@@ -14,8 +15,8 @@ class DeviceListWidget extends StatefulWidget {
 
 class _DeviceListWidgetState extends State<DeviceListWidget> {
   final AdbDeviceTracker _tracker = AdbDeviceTracker();
-  String? _selectedDevice;
-  List<String> _devices = [];
+  AdbDevice? _selectedDevice;
+  List<AdbDevice> _devices = [];
   bool _isListeningStarted = false;
 
   @override
@@ -106,22 +107,37 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
                               Colors.transparent,
                           padding: const EdgeInsets.symmetric(
                               vertical: 8.0,
-                              horizontal: 16.0
+                              horizontal: 8.0
                           ),
                           child: Row(
                             children: [
                               Icon(
-                                Icons.devices,
-                                color: theme.colorScheme.onSurface
+                                Icons.phone_android,
+                                color: theme.colorScheme.onSurface,
                               ),
                               const SizedBox(width: 10),
                               Flexible(
-                                child: Text(
-                                  device,
-                                  style: TextStyle(
-                                    color: theme.colorScheme.onSurface
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      device.model,
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onSurface,
+                                        fontSize: theme.textTheme.bodyMedium?.fontSize,
+                                        fontWeight: FontWeight.w500
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      device.id,
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onSurface.withAlpha(200),
+                                        fontSize: theme.textTheme.bodySmall?.fontSize
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],

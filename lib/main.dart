@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:android_sideloader/adb/adb_device.dart';
 import 'package:android_sideloader/logs/log.dart';
 import 'package:android_sideloader/logs/save_logs.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String? _selectedDevice;
+  AdbDevice? _selectedDevice;
   String? _selectedFile;
   bool get _isButtonEnabled => _selectedDevice != null && _selectedFile != null;
 
@@ -92,9 +93,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _installAPK() async {
     final selectedFile = _selectedFile;
-    if (selectedFile == null || _selectedDevice == null) return;
+    final deviceId = _selectedDevice?.id;
+    if (selectedFile == null || deviceId == null) return;
     Adb.installAPK(
-      device: _selectedDevice,
+      device: deviceId,
       filePath: selectedFile,
       onSuccess: (outText) {
         Log.i("Successfully installed APK file $_selectedFile:\n$outText");

@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:android_sideloader/adb/adb_device.dart';
 import 'package:android_sideloader/file_path.dart';
 import '../logs/log.dart';
 import '../on_app_exit.dart';
+import 'adb.dart';
 import 'adb_path.dart';
 
 class AdbDeviceTracker {
@@ -14,12 +16,12 @@ class AdbDeviceTracker {
   factory AdbDeviceTracker() => instance;
 
   Process? _process;
-  List<String>? _connectedDevices;
+  List<AdbDevice>? _connectedDevices;
 
   /// Starts the adb `track-devices` process and pushes updates to the provided
   /// callback function.
   Future<void> startTracking({
-    required Function(List<String> devices) onDeviceChange,
+    required Function(List<AdbDevice> devices) onDeviceChange,
   }) async {
     if (_process != null) {
       throw Exception(
@@ -38,9 +40,12 @@ class AdbDeviceTracker {
 
       _process!.stdout
           .transform(utf8.decoder)
-          .listen((lines) {
+          .listen((lines) async {
             Log.d("Raw `track-devices` string: '''$lines'''");
-            final connectedDevices = _parseConnectedDevicesFromOutput(lines);
+            final connectedDevices = await _parseConnectedDevices(lines)
+              .map((id) async => await Adb.getAdbDevice(id))
+              .wait
+              .then((devices) => devices.whereType<AdbDevice>().toList());
             Log.d("Detected connected devices: $connectedDevices");
 
             if (!_equalLists(connectedDevices, _connectedDevices)) {
@@ -73,7 +78,7 @@ class AdbDeviceTracker {
   }
 
   /// Helper to compare two device lists
-  bool _equalLists(List<String>? a, List<String>? b) {
+  bool _equalLists<T>(List<T>? a, List<T>? b) {
     if (a == null && b == null) {
       return true;
     }
@@ -102,10 +107,10 @@ class AdbDeviceTracker {
   /// ```
   ///
   /// Connected devices have `device` as the INFO
-  List<String> _parseConnectedDevicesFromOutput(String lines) {
+  List<String> _parseConnectedDevices(String lines) {
     final cleanLines = _cleanOutput(lines);
     final payload = _getLatestPayload(cleanLines);
-    Log.d("Latest payload is $payload");
+    Log.d("Latest payload is '''$payload'''");
     return payload
         .split("\n")
         .map((line) => line.trim())

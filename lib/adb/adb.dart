@@ -58,7 +58,7 @@ class Adb {
         '-s $deviceId '
         'shell getprop $propId'
       );
-      Log.i("Successfully got $propId:\n${result.outText}");
+      Log.d("Successfully got $propId: ${result.outText}");
       return result.outText;
     } on ShellException catch (shellException, stackTrace) {
       Log.e(

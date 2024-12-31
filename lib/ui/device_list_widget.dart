@@ -1,8 +1,9 @@
 import 'package:android_sideloader/adb/adb_device.dart';
+import 'package:android_sideloader/ui/device_list_item.dart';
 import 'package:flutter/material.dart';
 
-import 'adb/adb_device_tracker.dart';
-import 'logs/log.dart';
+import '../adb/adb_device_tracker.dart';
+import '../logs/log.dart';
 
 class DeviceListWidget extends StatefulWidget {
   final void Function(AdbDevice? selectedDevice) onDeviceSelected;
@@ -109,39 +110,7 @@ class _DeviceListWidgetState extends State<DeviceListWidget> {
                               vertical: 8.0,
                               horizontal: 8.0
                           ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.phone_android,
-                                color: theme.colorScheme.onSurface,
-                              ),
-                              const SizedBox(width: 10),
-                              Flexible(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      device.model,
-                                      style: TextStyle(
-                                        color: theme.colorScheme.onSurface,
-                                        fontSize: theme.textTheme.bodyMedium?.fontSize,
-                                        fontWeight: FontWeight.w500
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    Text(
-                                      device.id,
-                                      style: TextStyle(
-                                        color: theme.colorScheme.onSurface.withAlpha(200),
-                                        fontSize: theme.textTheme.bodySmall?.fontSize
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                          child: DeviceListItem(device: device)
                         ),
                       );
                     },

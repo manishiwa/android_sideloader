@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:android_sideloader/file_path.dart';
+import 'package:android_sideloader/util/file_path.dart';
 import '../logs/log.dart';
 
 class AdbPath {

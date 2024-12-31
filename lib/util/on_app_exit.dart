@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:window_manager/window_manager.dart';
-import 'logs/log.dart';
+import '../logs/log.dart';
 
 class OnAppExit {
   static var _exitHooksInitialized = false;
@@ -31,7 +31,7 @@ class OnAppExit {
     for (var signal in signals) {
       try {
         signal.watch().listen((_) async {
-          Log.f('Received termination signal ($signal). Stop tracking...');
+          Log.f('Received termination signal ($signal). Calling listeners...');
           for (final listener in windowManager.listeners) {
             listener.onWindowClose();
           }

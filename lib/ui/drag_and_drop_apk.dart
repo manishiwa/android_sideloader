@@ -1,7 +1,7 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 
-import 'logs/log.dart';
+import '../logs/log.dart';
 
 class DragAndDropApk extends StatefulWidget {
   final Widget child;
@@ -67,9 +67,9 @@ class _DragAndDropApkState extends State<DragAndDropApk> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
-                              Icons.file_download,
-                              size: 50,
-                              color: Colors.blue
+                            Icons.file_download,
+                            size: 50,
+                            color: Colors.blue,
                           ),
                           const SizedBox(height: 20),
                           Text(

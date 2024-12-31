@@ -1,16 +1,8 @@
-import 'dart:io';
-import 'package:android_sideloader/adb/adb_device.dart';
 import 'package:android_sideloader/logs/log.dart';
-import 'package:android_sideloader/logs/save_logs.dart';
+import 'package:android_sideloader/ui/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:logger/logger.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:window_manager/window_manager.dart';
-
-import 'adb/adb.dart';
-import 'apk_drop.dart';
-import 'device_list_widget.dart';
 
 void main() async => await Log.init(level: Level.all, () async {
   Log.i("Logging initialized. Starting app...");
@@ -41,167 +33,22 @@ class SideloaderApp extends StatelessWidget {
       title: 'App Sideloader',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue,
-            brightness: Brightness.light
+          seedColor: Colors.blue,
+          brightness: Brightness.light,
         ),
         useMaterial3: true,
-        brightness: Brightness.light
+        brightness: Brightness.light,
       ),
       darkTheme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.blue,
-              brightness: Brightness.dark
-          ),
-          useMaterial3: true,
-          brightness: Brightness.dark
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+        brightness: Brightness.dark,
       ),
       themeMode: ThemeMode.dark,
-      home: const HomeScreen(title: 'App Sideloader'),
-    );
-  }
-}
-
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  AdbDevice? _selectedDevice;
-  String? _selectedFile;
-  bool get _isButtonEnabled => _selectedDevice != null && _selectedFile != null;
-
-  Future<void> _pickFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['apk'], // Restrict to APK files only
-    );
-
-    if (result != null && result.files.single.path != null) {
-      setState(() {
-        _selectedFile = result.files.single.path!;
-        Log.i("Selected APK file $_selectedFile");
-      });
-    } else {
-      Log.w("Did not pick good file: $result");
-    }
-  }
-
-  Future<void> _installAPK() async {
-    final selectedFile = _selectedFile;
-    final deviceId = _selectedDevice?.id;
-    if (selectedFile == null || deviceId == null) return;
-    Adb.installAPK(
-      device: deviceId,
-      filePath: selectedFile,
-      onSuccess: (outText) {
-        Log.i("Successfully installed APK file $_selectedFile:\n$outText");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('App successfully installed!'),
-            ),
-          );
-        }
-      },
-      onFailure: (errorMessage) {
-        Log.w("Failed to install APK file $_selectedFile:\n$errorMessage");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to install app: $errorMessage'),
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  void _launchHelpURL() async {
-    final Uri url = Uri.parse(
-      'https://github.com/ryan-andrew/android_sideloader?tab=readme-ov-file#android-sideloader'
-    );
-    if (!await launchUrl(url)) {
-      throw 'Could not launch $url';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DragAndDropApk(
-      onApkDropped: (String s) {
-        setState(() => _selectedFile = s );
-      },
-      child: Scaffold(
-        floatingActionButton: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SaveLogButton(),
-            const SizedBox(width: 8),
-            Tooltip(
-              message: "More Information",
-              child: IconButton(
-                  onPressed: () {
-                    _launchHelpURL();
-                  },
-                  icon: const Icon(Icons.help)
-              ),
-            ),
-          ],
-        ),
-        body: Row(
-          children: [
-            DeviceListWidget(
-              onDeviceSelected: (device) {
-                Log.i("Selected device $device");
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  setState(() => _selectedDevice = device);
-                });
-              },
-            ),
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      _selectedFile != null
-                          ? 'Selected File: ${
-                            _selectedFile!.split(Platform.pathSeparator).last
-                          }' : 'No file selected',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: _selectedFile != null ?
-                          Colors.green : Colors.red,
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: _pickFile,
-                          child: const Text('Choose APK File'),
-                        ),
-                        const SizedBox(width: 40),
-                        ElevatedButton(
-                          onPressed: _isButtonEnabled ? _installAPK : null,
-                          child: const Text('Install APK'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      home: const HomeScreen(),
     );
   }
 }

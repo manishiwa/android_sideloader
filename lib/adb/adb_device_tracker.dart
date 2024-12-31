@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:android_sideloader/adb/adb_device.dart';
-import 'package:android_sideloader/file_path.dart';
+import 'package:android_sideloader/util/file_path.dart';
 import '../logs/log.dart';
-import '../on_app_exit.dart';
+import '../util/on_app_exit.dart';
 import 'adb.dart';
 import 'adb_path.dart';
 

@@ -5,7 +5,7 @@ import 'dart:ui';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
 
-import '../file_path.dart';
+import '../util/file_path.dart';
 
 class Log {
   static late final File logFile;

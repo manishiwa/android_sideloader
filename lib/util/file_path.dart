@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:android_sideloader/extensions.dart';
+import 'package:android_sideloader/util/extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-import 'logs/log.dart';
+import '../logs/log.dart';
 
 class FilePath {
   static Future<String> get path async {

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:android_sideloader/file_path.dart';
-import '../log.dart';
+import '../logs/log.dart';
 
 class AdbPath {
   static Future<String> get adbPath async => (await adbFile).path;

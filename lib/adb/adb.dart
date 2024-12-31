@@ -1,4 +1,4 @@
-import 'package:android_sideloader/log.dart';
+import 'package:android_sideloader/logs/log.dart';
 import 'package:process_run/process_run.dart';
 import 'adb_path.dart';
 

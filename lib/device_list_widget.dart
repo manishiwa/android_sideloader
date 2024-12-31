@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'adb/adb_device_tracker.dart';
-import 'log.dart';
+import 'logs/log.dart';
 
 class DeviceListWidget extends StatefulWidget {
   final void Function(String? selectedDevice) onDeviceSelected;

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:window_manager/window_manager.dart';
-import 'log.dart';
+import 'logs/log.dart';
 
 class OnAppExit {
   static var _exitHooksInitialized = false;

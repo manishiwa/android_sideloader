@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:android_sideloader/file_path.dart';
-import '../log.dart';
+import '../logs/log.dart';
 import '../on_app_exit.dart';
 import 'adb_path.dart';
 

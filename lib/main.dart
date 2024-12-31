@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:android_sideloader/log.dart';
+import 'package:android_sideloader/logs/log.dart';
+import 'package:android_sideloader/logs/save_logs.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:logger/logger.dart';
@@ -134,11 +135,22 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() => _selectedFile = s );
       },
       child: Scaffold(
-        floatingActionButton: IconButton(
-            onPressed: () {
-              _launchHelpURL();
-            },
-            icon: const Icon(Icons.help)
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SaveLogButton(),
+            const SizedBox(width: 8),
+            Tooltip(
+              message: "More Information",
+              child: IconButton(
+                  onPressed: () {
+                    _launchHelpURL();
+                  },
+                  icon: const Icon(Icons.help)
+              ),
+            ),
+          ],
         ),
         body: Row(
           children: [

@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
 
-import 'file_path.dart';
+import '../file_path.dart';
 
 class Log {
+  static late final File logFile;
+
   static late Logger _log;
 
   static t(dynamic message, {Object? error, StackTrace? stackTrace}) =>
@@ -49,9 +52,10 @@ class Log {
     );
     await _log.init;
 
+    logFile = await FilePath.getFile("log.txt");
     final fullOutput = MultiOutput([
       ConsoleOutput(),
-      FileOutput(file: await FilePath.getFile("log.txt")),
+      FileOutput(file: logFile),
     ]);
     _log = Logger(
         filter: ProductionFilter(),

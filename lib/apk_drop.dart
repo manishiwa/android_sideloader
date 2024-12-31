@@ -1,7 +1,7 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 
-import 'log.dart';
+import 'logs/log.dart';
 
 class DragAndDropApk extends StatefulWidget {
   final Widget child;

@@ -16,7 +16,7 @@ Just:
 4. Click `Install APK`
 
 That's it! The entire process only takes a few seconds. **No command lines, no installing SDKs, no installing ADB, no
-installing drivers** - you don't even install this app! Just download and run.
+installing drivers** - Just download and run!
 
 #### See it in action:
 
@@ -63,24 +63,62 @@ software more frequently marks this as a virus, but it is not.
 If you have issues using this, choose the `AndroidSideloader-v*.*.*-Windows-Portable.zip` if you need it to be
 portable, or `AndroidSideloader-v*.*.*-Windows-Installer.exe` otherwise.
 
-## Using
+## First Time Setup
 
 ### Prerequisites
 
-1. Ensure that USB debugging is turned on in your Android device settings
-    - https://developer.android.com/studio/debug/dev-options#enable
-2. Make sure you tap `Allow` when prompted on your Android device when you connect your device
-    > <img src="docs/images/allow_debugging.png" alt="See it in action" width="200"/>
-    > 
-    > Tapping `Always allow from this computer` will ensure that you only ever need to do this once
+Ensure that USB debugging is turned on in your Android device settings
+  - https://developer.android.com/studio/debug/dev-options#enable
 
 ### Steps
 
-- The first time you launch Android Sideloader, Windows may warn you that the app is not from a known developer. You
-will need to click "Run Anyway".
-- Additionally, ADB may request networking permissions from the Windows Firewall. This
+1. The first time you launch Android Sideloader, Windows may warn you that the app is not from a known developer. You
+will need to click "More Info", then "Run Anyway".
+    > <img src="docs/images/smart-screen-1.png" alt="See it in action" width="300"/>
+    >
+    > Click "More Info"
+    > 
+    > ---
+    > 
+    > <img src="docs/images/smart-screen-2.png" alt="See it in action" width="300"/>
+    > 
+    > Click "Run Anyway"
+
+2. Additionally, ADB may request networking permissions from the Windows Firewall. This
 is due to the way ADB works internally, setting up a local server. This app does not require or use the Internet.
-- On your device, you should see a dialog the first time your run the app.
+3.  On your device, you may see a dialog the first time your run the app. Make sure you tap `Allow` when prompted.
+    > <img src="docs/images/allow_debugging.png" alt="See it in action" width="200"/>
+    >
+    > Tapping `Always allow from this computer` will ensure that you only ever need to do this once
+
+## How to Use
+
+1. Open Android Sideloader
+   > <img src="docs/images/demo-initial-screen.png" alt="See it in action" width="400"/>
+   >
+   > The Android Sideloader screen
+2. Select your device
+   > <img src="docs/images/demo-select-device.png" alt="See it in action" width="400"/>
+   >
+   > The Android Sideloader screen
+3. Choose an APK file (or drag and drop one)
+   > <img src="docs/images/demo-select-apk.png" alt="See it in action" width="400"/>
+   >
+   > A file browser window will appear, where you can select the APK file you want to install.
+   > 
+   > ---
+   > 
+   > <img src="docs/images/demo-drag-apk.png" alt="See it in action" width="400"/>
+   > 
+   > You can also just drag and drop your APK file into the Android Sideloader window.
+4. Click `Install APK`
+   > <img src="docs/images/demo-install-apk.png" alt="See it in action" width="400"/>
+5. The app is installed
+   > <img src="docs/images/demo-app-installed.png" alt="See it in action" width="400"/>
+   
+### Video Demonstration
+
+<img src="docs/videos/demo2.gif" alt="See it in action" width="500"/>
 
 ## Troubleshooting
 

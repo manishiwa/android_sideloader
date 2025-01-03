@@ -3,6 +3,8 @@ param (
     [string]$VersionName
 )
 
+$VersionName = $VersionName.TrimStart('v')
+
 $changelogPath = ".\CHANGELOG.md"
 if (-Not (Test-Path -Path $changelogPath)) {
     Write-Host "Error: Changelog file '$changelogPath' not found." -ForegroundColor Red

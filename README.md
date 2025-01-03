@@ -52,7 +52,7 @@ Ensure that USB debugging is turned on in your Android device settings
 
 ### First Time Setup Steps
 
-1. The first time you launch Android Sideloader, Windows may warn you that the app is not from a known developer. You
+1. The first time you launch Android Sideloader, Windows may warn you that the app is not recognized. You
 will need to click "More Info", then "Run Anyway".
 
     <figure>

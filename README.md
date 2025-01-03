@@ -25,13 +25,13 @@ installing drivers** - Just download and run!
 ## Table of Contents
 
 - [Downloading](#downloading)
-    - [Steps](#downloading-steps)
+    - [Downloading Steps](#downloading-steps)
     - [Notice on Virus Detection](#notice-on-virus-detection)
 - [First Time Setup](#first-time-setup)
     - [Prerequisites](#prerequisites)
-    - [Steps](#first-time-setup-steps)
+    - [First Time Setup Steps](#first-time-setup-steps)
 - [How to Use](#how-to-use)
-    - [Steps](#how-to-use-steps)
+    - [How to Use Steps](#how-to-use-steps)
     - [Video Demonstration](#video-demonstration)
 - [Troubleshooting](#troubleshooting)
 

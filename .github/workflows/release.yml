@@ -16,6 +16,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Cache yq Binary
+        id: cache-yq
+        uses: actions/cache@v4
+        with:
+          path: C:\ProgramData\chocolatey\lib\yq
+          key: ${{ runner.os }}-yq-cache
+
+      - name: Cache Pub Dependencies
+        id: cache-pub
+        uses: actions/cache@v4
+        with:
+          path: |
+            C:\Users\runneradmin\AppData\Local\Pub\Cache
+            .dart_tool
+          key: ${{ runner.os }}-pub-cache-${{ hashFiles('pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-cache
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2.18.0
         with:
@@ -23,6 +40,7 @@ jobs:
           flutter-version-file: pubspec.yaml
 
       - name: Install Dependencies
+        if: steps.cache-pub.outputs.cache-hit != 'true'
         run: flutter pub get
 
       - name: Build for Windows

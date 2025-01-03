@@ -44,8 +44,8 @@ jobs:
       - name: Get Artifacts
         id: get-artifacts
         run: |
-          $archive=build/windows/x64/runner/Release/
-          $installer=build/windows/x64/runner/Installer/Android Sideloader-${{ env.RELEASE_VERSION }}-Windows-Installer.exe
+          $archive="build/windows/x64/runner/Release/"
+          $installer="build/windows/x64/runner/Installer/Android Sideloader-${{ env.RELEASE_VERSION }}-Windows-Installer.exe"
           echo "ARCHIVE=$archive" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "INSTALLER=$installer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 

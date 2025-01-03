@@ -5,18 +5,6 @@ on:
     tags:
       - "v*.*.*"
 
-env:
-  RUNNER_PATH: build/windows/x64/runner
-  ARTIFACT_PATH: ${{ env.RUNNER_PATH }}/Artifacts
-  BUILD_DIR_PATH: ${{ env.RUNNER_PATH }}/Release/
-  ARTIFACT_NAME: AndroidSideloader-${{ github.ref_name }}
-  ARCHIVE_NAME: ${{ env.ARTIFACT_NAME }}-Windows-Portable.zip
-  ARCHIVE_PATH: ${{ env.ARTIFACT_PATH }}/${{ env.ARCHIVE_NAME }}
-  INSTALLER_NAME: ${{ env.ARTIFACT_NAME }}-Windows-Installer.exe
-  INSTALLER_PATH: ${{ env.ARTIFACT_PATH }}/${{ env.INSTALLER_NAME }}
-  PACKAGE_NAME: ${{ env.ARTIFACT_NAME }}.exe
-  PACKAGE_PATH: ${{ env.ARTIFACT_PATH }}/${{ env.PACKAGE_NAME }}
-
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -26,6 +14,27 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Define Artifact Paths
+        id: define-artifact-paths
+        run: |
+          $runner="build/windows/x64/runner"
+          $artifacts="$runner/Artifacts"
+          $build="$runner/Release/"
+          $artifactName="AndroidSideloader-${{ github.ref_name }}"
+          $archiveName="$artifactName-Windows-Portable.zip"
+          $archive="$artifacts/$archiveName"
+          $installerName="$artifactName-Windows-Installer.exe"
+          $installer="$artifacts/$installerName"
+          $packageName="$artifactName.exe"
+          $package="$artifacts/$packageName"
+          echo "BUILD_DIR_PATH=$build" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "ARCHIVE_NAME=$archiveName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "ARCHIVE_PATH=$archive" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "INSTALLER_NAME=$installerName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "INSTALLER_PATH=$installer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "PACKAGE_NAME=$packageName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "PACKAGE_PATH=$package" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Extract Release Notes
         id: extract_changelog

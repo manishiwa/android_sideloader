@@ -32,17 +32,17 @@ jobs:
       - name: Get release version
         id: get-release-version
         run: |
-          release-version=$(yq '.version' pubspec.yaml)
-          echo "release-version=${release-version}" >> $GITHUB_ENV
+          $releaseVersion = yq '.version' pubspec.yaml
+          echo "releaseVersion=$releaseVersion" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: installer.iss
-          options:  /O+ /DMyAppVersion=""${{ env.release-version }}""
+          options:  /O+ /DMyAppVersion="${{ env.release-version }}"
 
       - name: Upload Build Files
         uses: actions/upload-artifact@v4
         with:
-          name: AndroidSideloaderWindowsBuild
+          name: AndroidSideloader-${{ env.release-version }}-Windows-Portable
           path: build/windows/x64/runner/Release/

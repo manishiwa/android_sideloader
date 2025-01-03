@@ -20,6 +20,7 @@ $match = [regex]::Matches($changelogContent -join "`n", $pattern, 'SingleLine') 
 if ($match -ne $null) {
     $releaseNotes = $match.Groups[1].Value.Trim() -replace "`r`n", "`n"
     Write-Host $releaseNotes
+    exit 0
 } else {
     Write-Host "Error: Release notes for version '$VersionName' not found." -ForegroundColor Red
     exit 1

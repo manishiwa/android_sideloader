@@ -15,6 +15,24 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Define Artifact Paths
+        id: define-artifact-paths
+        run: |
+          $archive="build/windows/x64/runner/Release/"
+          $installer="build/windows/x64/runner/Installer/Android Sideloader-${{ github.ref_name }}-Windows-Installer.exe"
+          echo "ARCHIVE_PATH=$archive" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "INSTALLER_PATH=$installer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Extract Release Notes
+        id: extract_changelog
+        run: |
+          $ReleaseNotes = & "scripts/get-release-notes.ps1" -VersionName ${{ github.ref_name }}
+          if ($LASTEXITCODE -ne 0) {
+            Write-Output "$ReleaseNotes"
+            exit 1
+          }
+          echo "RELEASE_NOTES=$ReleaseNotes" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2.18.0
         with:
@@ -28,48 +46,23 @@ jobs:
       - name: Build for Windows
         run: flutter build windows
 
-      - name: Get release version
-        id: get-release-version
-        run: |
-          $version=(yq -r .version pubspec.yaml)
-          Write-Host "Version: $version"
-          echo "RELEASE_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: installer.iss
-          options:  /O+ /DMyAppVersion="${{ env.RELEASE_VERSION }}"
-
-      - name: Get Artifacts
-        id: get-artifacts
-        run: |
-          $archive="build/windows/x64/runner/Release/"
-          $installer="build/windows/x64/runner/Installer/Android Sideloader-${{ env.RELEASE_VERSION }}-Windows-Installer.exe"
-          echo "ARCHIVE=$archive" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          echo "INSTALLER=$installer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          options:  /O+ /DMyAppVersion="${{ github.ref_name }}"
 
       - name: Upload Build Files
         uses: actions/upload-artifact@v4
         with:
-          name: AndroidSideloader-${{ env.RELEASE_VERSION }}-Windows-Portable
-          path: ${{ env.ARCHIVE }}
+          name: AndroidSideloader-${{ github.ref_name }}-Windows-Portable
+          path: ${{ env.ARCHIVE_PATH }}
 
       - name: Upload Installer Executable as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AndroidSideloader-${{ env.RELEASE_VERSION }}-Windows-Installer.exe
-          path: ${{ env.INSTALLER }}
-
-      - name: Extract Release Notes
-        id: extract_changelog
-        run: |
-          $ReleaseNotes = & "scripts/get-release-notes.ps1" -VersionName ${{ env.RELEASE_VERSION }}
-          if ($LASTEXITCODE -ne 0) {
-            Write-Output "$ReleaseNotes"
-            exit 1
-          }
-          echo "RELEASE_NOTES=$ReleaseNotes" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          name: AndroidSideloader-${{ github.ref_name }}-Windows-Installer.exe
+          path: ${{ env.INSTALLER_PATH }}
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
@@ -80,4 +73,4 @@ jobs:
           replacesArtifacts: true
           draft: true
           prerelease: true
-          artifacts: "${{ env.ARCHIVE }},${{ env.INSTALLER }}"
+          artifacts: "${{ env.ARCHIVE_PATH }},${{ env.INSTALLER_PATH }}"

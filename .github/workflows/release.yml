@@ -5,19 +5,21 @@ on:
     tags:
       - "v*.*.*"
 
+env:
+  RUNNER_PATH: build/windows/x64/runner
+  ARTIFACT_PATH: ${{ env.RUNNER_PATH }}/Artifacts
+  BUILD_DIR_PATH: ${{ env.RUNNER_PATH }}/Release/
+  ARTIFACT_NAME: AndroidSideloader-${{ github.ref_name }}
+  ARCHIVE_NAME: ${{ env.ARTIFACT_NAME }}-Windows-Portable.zip
+  ARCHIVE_PATH: ${{ env.ARTIFACT_PATH }}/${{ env.ARCHIVE_NAME }}
+  INSTALLER_NAME: ${{ env.ARTIFACT_NAME }}-Windows-Installer.exe
+  INSTALLER_PATH: ${{ env.ARTIFACT_PATH }}/${{ env.INSTALLER_NAME }}
+  PACKAGE_NAME: ${{ env.ARTIFACT_NAME }}.exe
+  PACKAGE_PATH: ${{ env.ARTIFACT_PATH }}/${{ env.PACKAGE_NAME }}
+
 jobs:
   build-windows:
     runs-on: windows-latest
-    env:
-      RUNNER_PATH: build/windows/x64/runner
-      ARTIFACT_PATH: ${{ env.RUNNER_PATH }}/Artifacts
-      BUILD_DIR_PATH: ${{ env.RUNNER_PATH }}/Release/
-      ARCHIVE_NAME: AndroidSideloader-${{ github.ref_name }}-Windows-Portable.zip
-      ARCHIVE_PATH: ${{ env.ARTIFACT_PATH }}/${{ env.ARCHIVE_NAME }}
-      INSTALLER_NAME: AndroidSideloader-${{ github.ref_name }}-Windows-Installer.exe
-      INSTALLER_PATH: ${{ env.ARTIFACT_PATH }}/${{ env.INSTALLER_NAME }}
-      PACKAGE_NAME: AndroidSideloader-${{ github.ref_name }}.exe
-      PACKAGE_PATH: ${{ env.ARTIFACT_PATH }}/AndroidSideloader-${{ github.ref_name }}.exe
     permissions:
       contents: write
     name: Build Flutter App Windows

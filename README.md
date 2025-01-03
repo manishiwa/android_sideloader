@@ -77,11 +77,13 @@ will need to click "More Info", then "Run Anyway".
 
     <figure>
       <img src="docs/images/smart-screen-1.png" alt="Click &quot;More Info&quot;" width="300"/>
+      <br>
       <figcaption><em>Click "More Info"</em></figcaption>
     </figure>
-
+    <br>
     <figure>
       <img src="docs/images/smart-screen-2.png" alt="Click &quot;Run Anyway&quot;" width="300"/>
+      <br>
       <figcaption><em>Click "Run Anyway"</em></figcaption>
     </figure>
 
@@ -91,6 +93,7 @@ is due to the way ADB works internally, setting up a local server. This app does
 
     <figure>
       <img src="docs/images/allow_debugging.png" alt="Tapping &quot;Always allow from this computer&quot; will ensure that you only ever need to do this once" width="200"/>
+      <br>
       <figcaption><em>Tapping "Always allow from this computer" will ensure that you only ever need to do this once</em></figcaption>
     </figure>
 
@@ -100,6 +103,7 @@ is due to the way ADB works internally, setting up a local server. This app does
 
     <figure>
       <img src="docs/images/demo-initial-screen.png" alt="The Android Sideloader screen" width="400"/>
+      <br> 
       <figcaption><em>The Android Sideloader screen</em></figcaption>
     </figure>
 
@@ -107,6 +111,7 @@ is due to the way ADB works internally, setting up a local server. This app does
 
     <figure>
       <img src="docs/images/demo-select-device.png" alt="Devices appear in &quot;Connected Devices&quot; list" width="400"/>
+      <br>
       <figcaption><em>Devices appear in "Connected Devices" list</em></figcaption>
     </figure>
 
@@ -114,11 +119,13 @@ is due to the way ADB works internally, setting up a local server. This app does
 
     <figure>
       <img src="docs/images/demo-select-apk.png" alt="A file browser window will appear where you can select the APK file you want to install" width="400"/>
+      <br>
       <figcaption><em>A file browser window will appear where you can select the APK file you want to install</em></figcaption>
     </figure>
-
+    <br>
     <figure>
       <img src="docs/images/demo-drag-apk.png" alt="You can also just drag and drop your APK file into the Android Sideloader window" width="400"/>
+      <br>
       <figcaption><em>You can also just drag and drop your APK file into the Android Sideloader window</em></figcaption>
     </figure>
 
@@ -126,6 +133,7 @@ is due to the way ADB works internally, setting up a local server. This app does
 
     <figure>
       <img src="docs/images/demo-install-apk.png" alt="" width="400"/>
+      <br>
       <figcaption><em></em></figcaption>
     </figure>
 
@@ -133,6 +141,7 @@ is due to the way ADB works internally, setting up a local server. This app does
 
     <figure>
       <img src="docs/images/demo-app-installed.png" alt="" width="400"/>
+      <br>
       <figcaption><em></em></figcaption>
     </figure>
    
@@ -149,6 +158,7 @@ is due to the way ADB works internally, setting up a local server. This app does
 - Make sure you tap `Allow` when prompted on your Android device when you connect your device
     <figure>
       <img src="docs/images/allow_debugging.png" alt="Tapping &quot;Always allow from this computer&quot; will ensure that you only ever need to do this once" width="200"/>
+      <br>
       <figcaption><em>Tapping "Always allow from this computer" will ensure that you only ever need to do this once</em></figcaption>
     </figure>
 - Try a different USB cable - not all of them will work

@@ -22,7 +22,22 @@ installing drivers** - Just download and run!
 
 <img src="docs/videos/demo2.gif" alt="See it in action" width="800"/>
 
+## Table of Contents
+
+- [Downloading](#downloading)
+    - [Steps](#downloading-steps)
+    - [Notice on Virus Detection](#notice-on-virus-detection)
+- [First Time Setup](#first-time-setup)
+    - [Prerequisites](#prerequisites)
+    - [Steps](#first-time-setup-steps)
+- [How to Use](#how-to-use)
+    - [Steps](#how-to-use-steps)
+    - [Video Demonstration](#video-demonstration)
+- [Troubleshooting](#troubleshooting)
+
 ## Downloading
+
+### Downloading Steps
 
 1. Go to the [Latest Release](https://github.com/ryan-andrew/android_sideloader/releases/latest)
 2. Click on the `Assets` dropdown
@@ -70,7 +85,7 @@ portable, or `AndroidSideloader-v*.*.*-Windows-Installer.exe` otherwise.
 Ensure that USB debugging is turned on in your Android device settings
   - https://developer.android.com/studio/debug/dev-options#enable
 
-### Steps
+### First Time Setup Steps
 
 1. The first time you launch Android Sideloader, Windows may warn you that the app is not from a known developer. You
 will need to click "More Info", then "Run Anyway".
@@ -98,6 +113,8 @@ is due to the way ADB works internally, setting up a local server. This app does
     </figure>
 
 ## How to Use
+
+### How to Use Steps
 
 1. Open Android Sideloader
 

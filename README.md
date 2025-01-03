@@ -25,8 +25,6 @@ installing drivers** - Just download and run!
 ## Table of Contents
 
 - [Downloading](#downloading)
-    - [Downloading Steps](#downloading-steps)
-    - [Notice on Virus Detection](#notice-on-virus-detection)
 - [First Time Setup](#first-time-setup)
     - [Prerequisites](#prerequisites)
     - [First Time Setup Steps](#first-time-setup-steps)
@@ -37,8 +35,6 @@ installing drivers** - Just download and run!
 
 ## Downloading
 
-### Downloading Steps
-
 1. Go to the [Latest Release](https://github.com/ryan-andrew/android_sideloader/releases/latest)
 2. Click on the `Assets` dropdown
 3. Choose your download
@@ -47,36 +43,6 @@ installing drivers** - Just download and run!
    - `AndroidSideloader-v*.*.*-Windows-Portable.zip`
      - This is a portable package of Android Sideloader. Unzip this wherever you want and run `android_sideloader.exe`
        from inside the new folder.
-   - `AndroidSideloader-v*.*.*.exe`
-     - This is an all-in-one package. It's a single exe file that can be run anywhere. This can sometimes be flagged
-       as a virus due to the way it works. See notice below for more details. If you have issues with this, choose one
-       of the other downloads. Choose the `AndroidSideloader-v*.*.*-Windows-Portable.zip` if you need it to be
-       portable, or `AndroidSideloader-v*.*.*-Windows-Installer.exe` otherwise.
-
-### Notice on virus detection
-
-This project is completely open source. The releases are generated automatically from source on GitHub itself. The
-build file is here: [.github/workflows/release.yml](.github/workflows/release.yml)
-
-Android Sideloader is portable by default. `AndroidSideloader-v*.*.*-Windows-Portable.zip` represents the pure build
-in a zip file. This will never trigger virus detectors, because there are no viruses in it.
-[VirusTotal link](https://www.virustotal.com/gui/file/c2cde232ef3e3280e20a0fd8be37cf03b2ad45c291f646f70880c5d837ccedc1/detection).
-
-The installer (`AndroidSideloader-v*.*.*-Windows-Installer.exe`) is created via [Inno Setup](https://en.wikipedia.org/wiki/Inno_Setup)
-([GitHub Link](https://github.com/jrsoftware/issrc)), which is a trusted and widely used software for creating
-installers. The source file for generating our installer is at [installer.iss](installer.iss). A couple of really lazy
-antivirus software providers may mark these as viruses, but they are not.
-[VirusTotal link](https://www.virustotal.com/gui/file/284bf312f62808c53f125421ab32a65c2aec1ccc1f5e83e25d469470dfa18b2b/detection).
-
-The all-in-one package (`AndroidSideloader-v*.*.*.exe`) is created via
-[Enigma Virtual Box](https://enigmaprotector.com/en/aboutvb.html). This works by packaging Android Sideloader into a
-container that virtualizes the files it needs to run. This way, it's a single exe file that can be run anywhere.
-The script that is used to create this is in the repo at [package.evb](package.evb). This
-method (having an exe that runs another exe hidden inside the first) is also sometimes used by malware, so antivirus
-software more frequently marks this as a virus, but it is not. 
-[VirusTotal link](https://www.virustotal.com/gui/file/662fca087c4deb02a90ab01e81ef320fbac654de50d77e4bac12670662321bc4/detection).
-If you have issues using this, choose the `AndroidSideloader-v*.*.*-Windows-Portable.zip` if you need it to be
-portable, or `AndroidSideloader-v*.*.*-Windows-Installer.exe` otherwise.
 
 ## First Time Setup
 

@@ -36,10 +36,9 @@ installing drivers** - Just download and run!
 ## Downloading
 
 1. Go to the [Latest Release](https://github.com/ryan-andrew/android_sideloader/releases/latest)
-2. Click on the `Assets` dropdown
-3. Choose your download
+2. Choose one of the following from the `Assets` dropdown
    - `AndroidSideloader-v*.*.*-Windows-Installer.exe`
-     - This will installer Android Sideloader on your PC. For those who prefer having it installed in a normal way.
+     - This will install Android Sideloader onto your PC. For those who prefer having it installed as a normal app.
    - `AndroidSideloader-v*.*.*-Windows-Portable.zip`
      - This is a portable package of Android Sideloader. Unzip this wherever you want and run `android_sideloader.exe`
        from inside the new folder.

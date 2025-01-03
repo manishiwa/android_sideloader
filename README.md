@@ -123,6 +123,7 @@ is due to the way ADB works internally, setting up a local server. This app does
       <figcaption><em>A file browser window will appear where you can select the APK file you want to install</em></figcaption>
     </figure>
     <br>
+    <br>
     <figure>
       <img src="docs/images/demo-drag-apk.png" alt="You can also just drag and drop your APK file into the Android Sideloader window" width="400"/>
       <br>

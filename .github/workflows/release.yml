@@ -86,6 +86,6 @@ jobs:
           name: Release ${{ github.ref_name }}
           bodyFile: "ReleaseNotes.md"
           replacesArtifacts: true
-          prerelease: true
+          prerelease: false
           artifactErrorsFailBuild: true
           artifacts: "${{ env.ARCHIVE_PATH }},${{ env.INSTALLER_PATH }}"

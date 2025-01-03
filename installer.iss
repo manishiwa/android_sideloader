@@ -31,7 +31,7 @@ LicenseFile=LICENSE
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=build\windows\x64\runner\Installer
+OutputDir=build\windows\x64\runner\Artifacts
 OutputBaseFilename={#StringChange(MyAppName, " ", "")}-{#MyAppVersion}-Windows-Installer
 SetupIconFile=assets\icon.ico
 Compression=lzma

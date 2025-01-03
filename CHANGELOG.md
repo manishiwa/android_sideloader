@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.9.6] - 2025-01-02
+
 ### Added
 - Added portable and installer versions for Windows
 

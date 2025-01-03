@@ -45,7 +45,7 @@ jobs:
               exit 1
           }
           $ReleaseNotes | Out-File -FilePath "./ReleaseNotes.md" -Encoding utf8
-          Write-Out "Release Notes:"
+          Write-Output "Release Notes:"
           Get-Content -Path "./ReleaseNotes.md"
 
       - name: Install Enigma Virtual Box

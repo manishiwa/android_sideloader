@@ -96,7 +96,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PACKAGE_NAME }}
-          path: ${{ env.PACKAGE_NAME }}
+          path: ${{ env.PACKAGE_PATH }}
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
@@ -107,4 +107,4 @@ jobs:
           replacesArtifacts: true
           prerelease: true
           artifactErrorsFailBuild: true
-          artifacts: "${{ env.ARCHIVE_PATH }},${{ env.INSTALLER_PATH }},${{ env.PACKAGE_NAME }}"
+          artifacts: "${{ env.ARCHIVE_PATH }},${{ env.INSTALLER_PATH }},${{ env.PACKAGE_PATH }}"

@@ -2,7 +2,6 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Android Sideloader"
-#define MyAppVersion "0.9.4"
 #define MyAppPublisher "Ryan Andrew"
 #define MyAppURL "https://github.com/ryan-andrew/android_sideloader"
 #define MyAppExeName "android_sideloader.exe"
@@ -33,7 +32,7 @@ LicenseFile=LICENSE
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=build\windows\x64\runner\Installer
-OutputBaseFilename=WindowsInstaller-{#MyAppName}{#MyAppVersion}
+OutputBaseFilename={#MyAppName} Installer {#MyAppVersion}
 SetupIconFile=assets\icon.ico
 Compression=lzma
 SolidCompression=yes

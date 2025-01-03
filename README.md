@@ -74,47 +74,67 @@ Ensure that USB debugging is turned on in your Android device settings
 
 1. The first time you launch Android Sideloader, Windows may warn you that the app is not from a known developer. You
 will need to click "More Info", then "Run Anyway".
-    > <img src="docs/images/smart-screen-1.png" alt="See it in action" width="300"/>
-    >
-    > Click "More Info"
-    > 
-    > ---
-    > 
-    > <img src="docs/images/smart-screen-2.png" alt="See it in action" width="300"/>
-    > 
-    > Click "Run Anyway"
+
+    <figure>
+      <img src="docs/images/smart-screen-1.png" alt="Click &quot;More Info&quot;" width="300"/>
+      <figcaption><em>Click "More Info"</em></figcaption>
+    </figure>
+
+    <figure>
+      <img src="docs/images/smart-screen-2.png" alt="Click &quot;Run Anyway&quot;" width="300"/>
+      <figcaption><em>Click "Run Anyway"</em></figcaption>
+    </figure>
 
 2. Additionally, ADB may request networking permissions from the Windows Firewall. This
 is due to the way ADB works internally, setting up a local server. This app does not require or use the Internet.
 3.  On your device, you may see a dialog the first time your run the app. Make sure you tap `Allow` when prompted.
-    > <img src="docs/images/allow_debugging.png" alt="See it in action" width="200"/>
-    >
-    > Tapping `Always allow from this computer` will ensure that you only ever need to do this once
+
+    <figure>
+      <img src="docs/images/allow_debugging.png" alt="Tapping &quot;Always allow from this computer&quot; will ensure that you only ever need to do this once" width="200"/>
+      <figcaption><em>Tapping "Always allow from this computer" will ensure that you only ever need to do this once</em></figcaption>
+    </figure>
 
 ## How to Use
 
 1. Open Android Sideloader
-   > <img src="docs/images/demo-initial-screen.png" alt="See it in action" width="400"/>
-   >
-   > The Android Sideloader screen
+
+    <figure>
+      <img src="docs/images/demo-initial-screen.png" alt="The Android Sideloader screen" width="400"/>
+      <figcaption><em>The Android Sideloader screen</em></figcaption>
+    </figure>
+
 2. Select your device
-   > <img src="docs/images/demo-select-device.png" alt="See it in action" width="400"/>
-   >
-   > The Android Sideloader screen
+
+    <figure>
+      <img src="docs/images/demo-select-device.png" alt="Devices appear in &quot;Connected Devices&quot; list" width="400"/>
+      <figcaption><em>Devices appear in "Connected Devices" list</em></figcaption>
+    </figure>
+
 3. Choose an APK file (or drag and drop one)
-   > <img src="docs/images/demo-select-apk.png" alt="See it in action" width="400"/>
-   >
-   > A file browser window will appear, where you can select the APK file you want to install.
-   > 
-   > ---
-   > 
-   > <img src="docs/images/demo-drag-apk.png" alt="See it in action" width="400"/>
-   > 
-   > You can also just drag and drop your APK file into the Android Sideloader window.
+
+    <figure>
+      <img src="docs/images/demo-select-apk.png" alt="A file browser window will appear where you can select the APK file you want to install" width="400"/>
+      <figcaption><em>A file browser window will appear where you can select the APK file you want to install</em></figcaption>
+    </figure>
+
+    <figure>
+      <img src="docs/images/demo-drag-apk.png" alt="You can also just drag and drop your APK file into the Android Sideloader window" width="400"/>
+      <figcaption><em>You can also just drag and drop your APK file into the Android Sideloader window</em></figcaption>
+    </figure>
+
 4. Click `Install APK`
-   > <img src="docs/images/demo-install-apk.png" alt="See it in action" width="400"/>
+
+    <figure>
+      <img src="docs/images/demo-install-apk.png" alt="" width="400"/>
+      <figcaption><em></em></figcaption>
+    </figure>
+
 5. The app is installed
-   > <img src="docs/images/demo-app-installed.png" alt="See it in action" width="400"/>
+
+    <figure>
+      <img src="docs/images/demo-app-installed.png" alt="" width="400"/>
+      <figcaption><em></em></figcaption>
+    </figure>
    
 ### Video Demonstration
 
@@ -127,7 +147,10 @@ is due to the way ADB works internally, setting up a local server. This app does
 - Ensure that USB debugging is turned on in your Android device settings
     - https://developer.android.com/studio/debug/dev-options#enable 
 - Make sure you tap `Allow` when prompted on your Android device when you connect your device
-  > <img src="docs/images/allow_debugging.png" alt="See it in action" width="200"/>
+    <figure>
+      <img src="docs/images/allow_debugging.png" alt="Tapping &quot;Always allow from this computer&quot; will ensure that you only ever need to do this once" width="200"/>
+      <figcaption><em>Tapping "Always allow from this computer" will ensure that you only ever need to do this once</em></figcaption>
+    </figure>
 - Try a different USB cable - not all of them will work
 - Try a different USB port on your computer
 

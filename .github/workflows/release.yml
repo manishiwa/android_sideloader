@@ -45,7 +45,7 @@ jobs:
           $ReleaseNotes | Out-File -FilePath "./ReleaseNotes.md" -Encoding utf8
 
       - name: Install Enigma Virtual Box
-        id: define-artifact-paths
+        id: install-enigma
         run: |
           choco install enigmavirtualbox -y --ignore-checksums
           $enigma="C:\Program Files (x86)\Enigma Virtual Box\enigmavbconsole.exe"

@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [1.0.0] - 2025-01-03
+
+### Removed
+- Removed Enigma package
+
 ## [0.9.6] - 2025-01-02
 
 ### Added

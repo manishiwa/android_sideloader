@@ -100,13 +100,13 @@ jobs:
       - name: Package macOS Build
         run: |
           cd build/macos/Build/Products/Release
-          zip -r "Android Sideloader.zip" "Android Sideloader.app/"
+          zip -r "AndroidSideloader-${{ github.ref_name }}-Mac.zip" "Android Sideloader.app/"
 
       - name: Upload Build Files
         uses: actions/upload-artifact@v4
         with:
           name: "AndroidSideloader-${{ github.ref_name }}-Mac.zip"
-          path: "build/macos/Build/Products/Release/Android Sideloader.zip"
+          path: "build/macos/Build/Products/Release/AndroidSideloader-${{ github.ref_name }}-Mac.zip"
 
   release:
     runs-on: ubuntu-latest
@@ -148,7 +148,7 @@ jobs:
       - name: Download macOS Build
         uses: actions/download-artifact@v4
         with:
-          name: "AndroidSideloader-${{ github.ref_name }}-Mac.zip"
+          name: AndroidSideloader-${{ github.ref_name }}-Mac.zip
           path: macos-artifacts
 
       - name: Create GitHub Release

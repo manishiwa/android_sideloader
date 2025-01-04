@@ -28,8 +28,10 @@ installing drivers** - Just download and run!
 - [First Time Setup](#first-time-setup)
     - [Prerequisites](#prerequisites)
     - [First Time Setup Steps](#first-time-setup-steps)
+      - [Windows](#windows)
+      - [Mac](#mac)
 - [How to Use](#how-to-use)
-    - [How to Use Steps](#how-to-use-steps)
+    - [Steps](#steps)
     - [Video Demonstration](#video-demonstration)
 - [Troubleshooting](#troubleshooting)
 
@@ -37,11 +39,18 @@ installing drivers** - Just download and run!
 
 1. Go to the [Latest Release](https://github.com/ryan-andrew/android_sideloader/releases/latest)
 2. Choose one of the following from the `Assets` dropdown
-   - `AndroidSideloader-v*.*.*-Windows-Installer.exe`
-     - This will install Android Sideloader onto your PC. For those who prefer having it installed as a normal app.
-   - `AndroidSideloader-v*.*.*-Windows-Portable.zip`
-     - This is a portable package of Android Sideloader. Unzip this wherever you want and run `android_sideloader.exe`
-       from inside the new folder.
+   - **Windows**
+     - `AndroidSideloader-v*.*.*-Windows-Installer.exe` (_Recommended_)
+       - This will install Android Sideloader onto your PC. For those who prefer having it installed as a normal app.
+       - See [First Time Setup > Windows](#windows) after running through the installer.
+     - `AndroidSideloader-v*.*.*-Windows-Portable.zip`
+       - This is a portable package of Android Sideloader. Unzip this wherever you want and run `android_sideloader.exe`
+         from inside the new folder.
+       - See [First Time Setup > Windows](#windows) after downloading and unzipping.
+   - **Mac**
+     - `AndroidSideloader-v*.*.*-Mac.zip`
+       - This zip file contains `Android Sideloader.app`, which is portable and can be opened directly.
+       - See [First Time Setup > Mac](#mac) after downloading.
 
 ## First Time Setup
 
@@ -132,7 +141,7 @@ be done by doing the following ([From Apple support](https://support.apple.com/g
 
 ## How to Use
 
-### How to Use Steps
+### Steps
 
 1. Open Android Sideloader
 
@@ -160,9 +169,9 @@ be done by doing the following ([From Apple support](https://support.apple.com/g
     <br>
     <br>
     <figure>
-      <img src="docs/images/demo-drag-apk.png" alt="You can also just drag and drop your APK file into the Android Sideloader window" width="400"/>
+      <img src="docs/images/demo-drag-apk.png" alt="You can also just drag and drop your APK file into the Android Sideloader window at any time" width="400"/>
       <br>
-      <figcaption><em>You can also just drag and drop your APK file into the Android Sideloader window</em></figcaption>
+      <figcaption><em>You can also just drag and drop your APK file into the Android Sideloader window at any time</em></figcaption>
     </figure>
 
 4. Click `Install APK`

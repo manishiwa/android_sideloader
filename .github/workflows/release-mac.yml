@@ -32,15 +32,10 @@ jobs:
         run: flutter pub get
 
       - name: Build macOS App
-        run: flutter build macos
-
-      - name: Compress Build Directory
-        run: |
-          cd ${{ env.ARTIFACT_DIR }}
-          zip -r "${{ env.ARCHIVE_NAME }}" .
+        run: flutter build macos --release --universal
 
       - name: Upload Build Files
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARCHIVE_NAME }}
-          path: ${{ env.ARTIFACT_DIR }}/../${{ env.ARCHIVE_NAME }}
+          name: "Android Sideloader.app"
+          path: "build/macos/Build/Products/Release/Android Sideloader.app"

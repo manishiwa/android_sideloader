@@ -32,18 +32,6 @@ jobs:
           echo "INSTALLER_NAME=$installerName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "INSTALLER_PATH=$installer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Extract Release Notes
-        id: extract_changelog
-        run: |
-          $ReleaseNotes = & "scripts/get-release-notes.ps1" -VersionName ${{ github.ref_name }}
-          if ($LASTEXITCODE -ne 0) {
-              Write-Error "Failed to create ReleaseNotes.md"
-              exit 1
-          }
-          $ReleaseNotes | Out-File -FilePath "./ReleaseNotes.md" -Encoding utf8
-          Write-Output "Release Notes:"
-          Get-Content -Path "./ReleaseNotes.md"
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2.18.0
         with:
@@ -78,17 +66,6 @@ jobs:
         with:
           name: ${{ env.INSTALLER_NAME }}
           path: ${{ env.INSTALLER_PATH }}
-
-      - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          bodyFile: "ReleaseNotes.md"
-          replacesArtifacts: true
-          prerelease: false
-          artifactErrorsFailBuild: true
-          artifacts: "${{ env.ARCHIVE_PATH }},${{ env.INSTALLER_PATH }}"
 
   build-macos:
     runs-on: macos-latest
@@ -130,3 +107,48 @@ jobs:
         with:
           name: "Android Sideloader.app"
           path: "build/macos/Build/Products/Release/Android Sideloader.zip"
+
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs:
+      - build-windows
+      - build-macos
+    name: Create GitHub Release
+    steps:
+      - name: Extract Release Notes
+        id: extract_changelog
+        run: |
+          chmod +x scripts/get-release-notes.sh
+          ReleaseNotes=$(scripts/get-release-notes.sh "${{ github.ref_name }}")
+          if [ $? -ne 0 ]; then
+              echo "Failed to create ReleaseNotes.md" >&2
+              exit 1
+          fi
+          echo "$ReleaseNotes" > ./ReleaseNotes.md
+          echo "Release Notes:"
+          cat ./ReleaseNotes.md
+
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-build
+          path: windows-artifacts
+
+      - name: Download macOS Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-build
+          path: macos-artifacts
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          replacesArtifacts: true
+          prerelease: false
+          artifactErrorsFailBuild: true
+          bodyFile: "ReleaseNotes.md"
+          artifacts: "windows-artifacts/*,macos-artifacts/*"

@@ -117,6 +117,9 @@ jobs:
       - build-macos
     name: Create GitHub Release
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Extract Release Notes
         id: extract_changelog
         run: |

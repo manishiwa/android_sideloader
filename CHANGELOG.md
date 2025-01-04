@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-01-04
+
+### Added
+- Support for Linux
+
 ## [1.1.0] - 2025-01-03
 
 ### Added

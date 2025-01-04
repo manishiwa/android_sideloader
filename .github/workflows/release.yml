@@ -133,16 +133,22 @@ jobs:
           echo "Release Notes:"
           cat ./ReleaseNotes.md
 
-      - name: Download Windows Artifacts
+      - name: Download Windows Portable
         uses: actions/download-artifact@v4
         with:
-          name: windows-build
+          name: AndroidSideloader-${{ github.ref_name }}-Windows-Portable.zip
           path: windows-artifacts
 
-      - name: Download macOS Artifacts
+      - name: Download Windows Installer
         uses: actions/download-artifact@v4
         with:
-          name: macos-build
+          name: AndroidSideloader-${{ github.ref_name }}-Windows-Installer.exe
+          path: windows-artifacts
+
+      - name: Download macOS Build
+        uses: actions/download-artifact@v4
+        with:
+          name: "Android Sideloader.app"
           path: macos-artifacts
 
       - name: Create GitHub Release

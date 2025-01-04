@@ -105,7 +105,7 @@ jobs:
       - name: Upload Build Files
         uses: actions/upload-artifact@v4
         with:
-          name: "Android Sideloader.app"
+          name: "AndroidSideloader-${{ github.ref_name }}-Mac.zip"
           path: "build/macos/Build/Products/Release/Android Sideloader.zip"
 
   release:
@@ -148,7 +148,7 @@ jobs:
       - name: Download macOS Build
         uses: actions/download-artifact@v4
         with:
-          name: "Android Sideloader.app"
+          name: "AndroidSideloader-${{ github.ref_name }}-Mac.zip"
           path: macos-artifacts
 
       - name: Create GitHub Release

@@ -52,6 +52,8 @@ Ensure that USB debugging is turned on in your Android device settings
 
 ### First Time Setup Steps
 
+#### Windows
+
 1. The first time you launch Android Sideloader, Windows may warn you that the app is not recognized. You
 will need to click "More Info", then "Run Anyway".
 
@@ -69,7 +71,58 @@ will need to click "More Info", then "Run Anyway".
 
 2. Additionally, ADB may request networking permissions from the Windows Firewall. This
 is due to the way ADB works internally, setting up a local server. This app does not require or use the Internet.
-3.  On your device, you may see a dialog the first time your run the app. Make sure you tap `Allow` when prompted.
+3.  On your Android device, you may see a dialog the first time your run the app. Make sure you tap `Allow` when prompted.
+
+    <figure>
+      <img src="docs/images/allow_debugging.png" alt="Tapping &quot;Always allow from this computer&quot; will ensure that you only ever need to do this once" width="200"/>
+      <br>
+      <figcaption><em>Tapping "Always allow from this computer" will ensure that you only ever need to do this once</em></figcaption>
+    </figure>
+
+#### Mac
+
+1. Before you open the Android Sideloader app, make sure that you are allowing applications from developers. This can
+be done by doing the following ([From Apple support](https://support.apple.com/guide/mac-help/if-an-app-is-not-from-the-mac-app-store-mh40620/mac)):
+   1. On your Mac, choose Apple menu  > System Settings, then click Privacy & Security  in the sidebar.
+   (You may need to scroll down.) 
+   2. Go to Security, click the pop-up menu next to “Allow applications from,” then choose App Store & Known Developers.
+
+   <figure>
+     <img src="docs/images/mac-prereq-1.png" alt="Allow applications from &quot;App Store & Known Developers&quot;" width="500"/>
+     <br>
+     <figcaption><em>Allow applications from "App Store & Known Developers"</em></figcaption>
+   </figure>
+
+2. The first time you try to open the app, you will receive a popup like the following. Click "Done".
+
+   <figure>
+     <img src="docs/images/mac-install-1.png" alt="Click &quot;Done&quot;" width="200"/>
+     <br>
+     <figcaption><em>Click "Done"</em></figcaption>
+   </figure>
+
+3.  You will need to allow the app to "Open Anyway". This can be done by doing the following
+([From Apple support](https://support.apple.com/guide/mac-help/open-a-mac-app-from-an-unknown-developer-mh40616/mac)):
+    1. On your Mac, choose Apple menu  > System Settings, then click Privacy & Security  in the sidebar. (You may need to scroll down.)
+    2. Go to Security, then click Open.
+    3. Click Open Anyway. This button is available for about an hour after you try to open the app.
+    4. Enter your login password, then click OK.
+
+    <figure>
+      <img src="docs/images/mac-install-2.png" alt="Click &quot;Open Anyway&quot;" width="500"/>
+      <br>
+      <figcaption><em>Click "Open Anyway"</em></figcaption>
+    </figure>
+
+4. The next time you try to open Android Sideloader, You will see the following popup. Click "Open Anyway".
+
+    <figure>
+      <img src="docs/images/mac-install-3.png" alt="Click &quot;Open Anyway&quot;" width="200"/>
+      <br>
+      <figcaption><em>Click "Open Anyway"</em></figcaption>
+    </figure>
+
+5. On your Android device, you may see a dialog the first time your run the app. Make sure you tap `Allow` when prompted.
 
     <figure>
       <img src="docs/images/allow_debugging.png" alt="Tapping &quot;Always allow from this computer&quot; will ensure that you only ever need to do this once" width="200"/>
@@ -138,7 +191,7 @@ is due to the way ADB works internally, setting up a local server. This app does
 
 - Ensure that USB debugging is turned on in your Android device settings
     - https://developer.android.com/studio/debug/dev-options#enable 
-- Make sure you tap `Allow` when prompted on your Android device when you connect your device
+- Make sure you tap `Allow` when prompted on your Android device when you connect it to your computer
     <figure>
       <img src="docs/images/allow_debugging.png" alt="Tapping &quot;Always allow from this computer&quot; will ensure that you only ever need to do this once" width="200"/>
       <br>

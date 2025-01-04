@@ -32,7 +32,7 @@ jobs:
         run: flutter pub get
 
       - name: Build macOS App
-        run: flutter build macos --release --universal
+        run: flutter build macos --release
 
       - name: Upload Build Files
         uses: actions/upload-artifact@v4

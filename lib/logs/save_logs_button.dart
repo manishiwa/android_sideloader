@@ -39,6 +39,7 @@ class SaveLogButton extends StatelessWidget {
     required Function(Object error) onLogsFailedToSave,
   }) async {
     final String? selectedPath = await FilePicker.platform.saveFile(
+      type: FileType.custom,
       dialogTitle: "Save logs",
       fileName: "android_sideloader_logs.txt",
       lockParentWindow: true,

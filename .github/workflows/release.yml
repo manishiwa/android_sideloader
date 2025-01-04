@@ -146,7 +146,7 @@ jobs:
       - name: Package Linux Build
         run: |
           cd ${{ env.ARTIFACT_DIR }}
-          zip -r "../${{ env.ARCHIVE_NAME }}" bundle/*
+          zip -r "${{ env.ARCHIVE_NAME }}" bundle/*
 
       - name: Upload Build Files
         uses: actions/upload-artifact@v4

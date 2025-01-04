@@ -108,6 +108,47 @@ jobs:
           name: "AndroidSideloader-${{ github.ref_name }}-Mac.zip"
           path: "build/macos/Build/Products/Release/AndroidSideloader-${{ github.ref_name }}-Mac.zip"
 
+  build-linux:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    name: Build Flutter App Linux
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Define Artifact Paths
+        id: define-artifact-paths
+        run: |
+          ARTIFACT_DIR=build/linux/x64/release
+          ARCHIVE_NAME="AndroidSideloader-${{ github.ref_name }}-Linux.zip"
+          echo "ARTIFACT_DIR=$ARTIFACT_DIR" >> $GITHUB_ENV
+          echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> $GITHUB_ENV
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2.18.0
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Linux App
+        run: flutter build linux --release
+
+      - name: Package Linux Build
+        run: |
+          cd ${{ env.ARTIFACT_DIR }}
+          zip -r "../${{ env.ARCHIVE_NAME }}" bundle/*
+
+      - name: Upload Build Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.ARCHIVE_NAME }}"
+          path: "${{ env.ARTIFACT_DIR }}/${{ env.ARCHIVE_NAME }}"
+
   release:
     runs-on: ubuntu-latest
     permissions:
@@ -115,6 +156,7 @@ jobs:
     needs:
       - build-windows
       - build-macos
+      - build-linux
     name: Create GitHub Release
     steps:
       - name: Checkout Repository
@@ -151,6 +193,12 @@ jobs:
           name: AndroidSideloader-${{ github.ref_name }}-Mac.zip
           path: macos-artifacts
 
+      - name: Download Linux Build
+        uses: actions/download-artifact@v4
+        with:
+          name: AndroidSideloader-${{ github.ref_name }}-Linux.zip
+          path: linux-artifacts
+
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
@@ -160,4 +208,4 @@ jobs:
           prerelease: false
           artifactErrorsFailBuild: true
           bodyFile: "ReleaseNotes.md"
-          artifacts: "windows-artifacts/*,macos-artifacts/*"
+          artifacts: "windows-artifacts/*,macos-artifacts/*,linux-artifacts/*"

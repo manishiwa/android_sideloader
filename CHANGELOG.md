@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-01-03
+
+### Added
+- Support for Mac
+
 ## [1.0.0] - 2025-01-03
 
 ### Removed

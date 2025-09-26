@@ -91,7 +91,11 @@ jobs:
           Write-Host "Installing Inno Setup..."
           Start-Process -FilePath "innosetup.exe" -ArgumentList "/VERYSILENT", "/NORESTART" -Wait
           
+          # Give installation time to complete
+          Start-Sleep -Seconds 5
+          
           # Check installation paths
+          $found = $false
           $possiblePaths = @(
             "C:\Program Files (x86)\Inno Setup 6\ISCC.exe",
             "C:\Program Files\Inno Setup 6\ISCC.exe"
@@ -99,7 +103,14 @@ jobs:
           foreach ($path in $possiblePaths) {
             if (Test-Path $path) {
               Write-Host "Found ISCC.exe at: $path"
+              $found = $true
             }
+          }
+          
+          if (-not $found) {
+            Write-Host "Installation may not have completed successfully. Checking all Program Files..."
+            Get-ChildItem "C:\Program Files" -Name | Where-Object { $_ -like "*Inno*" }
+            Get-ChildItem "C:\Program Files (x86)" -Name | Where-Object { $_ -like "*Inno*" }
           }
 
       - name: Compile .ISS to .EXE Installer
@@ -133,7 +144,24 @@ jobs:
           }
           
           # Compile the installer using Inno Setup
-          & $isccPath /O+ /DMyAppVersion="${{ needs.setup.outputs.clean_version }}" installer.iss
+          Write-Host "Compiling installer with version: ${{ needs.setup.outputs.clean_version }}"
+          try {
+            & $isccPath /O+ /DMyAppVersion="${{ needs.setup.outputs.clean_version }}" installer.iss
+            Write-Host "Inno Setup compilation completed successfully"
+            
+            # Verify the installer was created
+            $expectedInstaller = "build\windows\x64\runner\Artifacts\AndroidSideloader-${{ needs.setup.outputs.clean_version }}-Windows-Installer.exe"
+            if (Test-Path $expectedInstaller) {
+              Write-Host "Installer created successfully: $expectedInstaller"
+            } else {
+              Write-Host "Warning: Expected installer not found at $expectedInstaller"
+              Write-Host "Contents of Artifacts directory:"
+              Get-ChildItem "build\windows\x64\runner\Artifacts" -Name
+            }
+          } catch {
+            Write-Host "Inno Setup compilation failed with error: $_"
+            throw
+          }
 
       - name: Compress Build Directory
         run: |

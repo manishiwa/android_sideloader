@@ -2,8 +2,8 @@ name: Build Release on `main` push
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       version:
@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
+      clean_version: ${{ steps.version.outputs.clean_version }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -23,18 +24,20 @@ jobs:
       - name: Determine Version
         id: version
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            # For tag pushes, use the tag name
-            VERSION="${{ github.ref_name }}"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
             # For manual dispatch with version input
             VERSION="${{ github.event.inputs.version }}"
+            CLEAN_VERSION=$(echo "$VERSION" | sed 's/^v//')
           else
-            # For manual dispatch without version, extract from pubspec.yaml
-            VERSION="v$(grep '^version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)"
+            # For push to main branch or manual dispatch without version, extract from pubspec.yaml and append branch name
+            PUBSPEC_VERSION=$(grep '^version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)
+            VERSION="v${PUBSPEC_VERSION}-${{ github.ref_name }}"
+            CLEAN_VERSION="${PUBSPEC_VERSION}-${{ github.ref_name }}"
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "clean_version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
           echo "Using version: $VERSION"
+          echo "Using clean version for installer: $CLEAN_VERSION"
 
   build-windows:
     runs-on: windows-latest
@@ -76,11 +79,15 @@ jobs:
       - name: Build for Windows
         run: flutter build windows
 
+      - name: Create Artifacts Directory
+        run: |
+          New-Item -ItemType Directory -Force -Path "build\windows\x64\runner\Artifacts"
+
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: installer.iss
-          options:  /O+ /DMyAppVersion="${{ needs.setup.outputs.version }}"
+          options:  /O+ /DMyAppVersion="${{ needs.setup.outputs.clean_version }}"
 
       - name: Compress Build Directory
         run: |

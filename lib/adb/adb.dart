@@ -18,7 +18,7 @@ class Adb {
       final result = await (await _shell).run(
         '"${await AdbPath.adbPath}" '
         '${device != null ? "-s $device " : ""}'
-        'install "$filePath"'
+        'install -r "$filePath"'
       );
       Log.i("Successfully installed APK:\n${result.outText}");
       onSuccess(result.outText);

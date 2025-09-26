@@ -1,9 +1,9 @@
-name: Build Release
+name: Build Release on `main` push
 
 on:
   push:
-    tags:
-      - "v*.*.*"
+    branches:
+      - main
 
 jobs:
   build-windows:

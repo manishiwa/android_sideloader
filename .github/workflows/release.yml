@@ -76,6 +76,11 @@ jobs:
       - name: Build for Windows
         run: flutter build windows
 
+      - name: Create Artifacts Directory
+        run: |
+          $artifactsDir = Split-Path -Parent "${{ env.ARCHIVE_PATH }}"
+          New-Item -ItemType Directory -Force -Path $artifactsDir
+
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:

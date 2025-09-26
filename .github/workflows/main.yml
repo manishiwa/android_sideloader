@@ -58,7 +58,7 @@ jobs:
           $artifactName="AndroidSideloader-${{ needs.setup.outputs.version }}"
           $archiveName="$artifactName-Windows-Portable.zip"
           $archive="$artifacts/$archiveName"
-          $installerName="$artifactName-Windows-Installer.exe"
+          $installerName="AndroidSideloader-${{ needs.setup.outputs.clean_version }}-Windows-Installer.exe"
           $installer="$artifacts/$installerName"
           echo "BUILD_DIR_PATH=$build" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "ARCHIVE_NAME=$archiveName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
@@ -226,7 +226,7 @@ jobs:
       - name: Download Windows Installer
         uses: actions/download-artifact@v4
         with:
-          name: AndroidSideloader-${{ needs.setup.outputs.version }}-Windows-Installer.exe
+          name: AndroidSideloader-${{ needs.setup.outputs.clean_version }}-Windows-Installer.exe
           path: windows-artifacts
 
       - name: Download macOS Build

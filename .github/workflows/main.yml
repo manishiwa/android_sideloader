@@ -83,11 +83,16 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path "build\windows\x64\runner\Artifacts"
 
+      - name: Install Inno Setup
+        run: |
+          # Download and install Inno Setup
+          Invoke-WebRequest -Uri "https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe" -OutFile "innosetup.exe"
+          Start-Process -FilePath "innosetup.exe" -ArgumentList "/VERYSILENT", "/NORESTART" -Wait
+
       - name: Compile .ISS to .EXE Installer
-        uses: nadeemjazmawe/inno-setup-action-cli@v6.0.5
-        with:
-          filepath: installer.iss
-          parameters: /O+ /DMyAppVersion="${{ needs.setup.outputs.clean_version }}"
+        run: |
+          # Compile the installer using Inno Setup
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /O+ /DMyAppVersion="${{ needs.setup.outputs.clean_version }}" installer.iss
 
       - name: Compress Build Directory
         run: |

@@ -2,12 +2,43 @@ name: Build Release on `main` push
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.2.0) - defaults to current version from pubspec.yaml'
+        required: false
+        type: string
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Determine Version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # For tag pushes, use the tag name
+            VERSION="${{ github.ref_name }}"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
+            # For manual dispatch with version input
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            # For manual dispatch without version, extract from pubspec.yaml
+            VERSION="v$(grep '^version:' pubspec.yaml | sed 's/version: //' | cut -d'+' -f1)"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Using version: $VERSION"
+
   build-windows:
     runs-on: windows-latest
+    needs: setup
     permissions:
       contents: write
     name: Build Flutter App Windows
@@ -21,7 +52,7 @@ jobs:
           $runner="build/windows/x64/runner"
           $artifacts="$runner/Artifacts"
           $build="$runner/Release/"
-          $artifactName="AndroidSideloader-${{ github.ref_name }}"
+          $artifactName="AndroidSideloader-${{ needs.setup.outputs.version }}"
           $archiveName="$artifactName-Windows-Portable.zip"
           $archive="$artifacts/$archiveName"
           $installerName="$artifactName-Windows-Installer.exe"
@@ -49,7 +80,7 @@ jobs:
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: installer.iss
-          options:  /O+ /DMyAppVersion="${{ github.ref_name }}"
+          options:  /O+ /DMyAppVersion="${{ needs.setup.outputs.version }}"
 
       - name: Compress Build Directory
         run: |
@@ -69,6 +100,7 @@ jobs:
 
   build-macos:
     runs-on: macos-latest
+    needs: setup
     permissions:
       contents: write
     name: Build Flutter App macOS
@@ -80,7 +112,7 @@ jobs:
         id: define-artifact-paths
         run: |
           ARTIFACT_DIR=build/macos/Build/Products/Release
-          ARCHIVE_NAME="${{ github.ref_name }}-macOS.zip"
+          ARCHIVE_NAME="${{ needs.setup.outputs.version }}-macOS.zip"
           echo "ARTIFACT_DIR=$ARTIFACT_DIR" >> $GITHUB_ENV
           echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> $GITHUB_ENV
 
@@ -100,16 +132,17 @@ jobs:
       - name: Package macOS Build
         run: |
           cd build/macos/Build/Products/Release
-          zip -r "AndroidSideloader-${{ github.ref_name }}-Mac.zip" "Android Sideloader.app/"
+          zip -r "AndroidSideloader-${{ needs.setup.outputs.version }}-Mac.zip" "Android Sideloader.app/"
 
       - name: Upload Build Files
         uses: actions/upload-artifact@v4
         with:
-          name: "AndroidSideloader-${{ github.ref_name }}-Mac.zip"
-          path: "build/macos/Build/Products/Release/AndroidSideloader-${{ github.ref_name }}-Mac.zip"
+          name: "AndroidSideloader-${{ needs.setup.outputs.version }}-Mac.zip"
+          path: "build/macos/Build/Products/Release/AndroidSideloader-${{ needs.setup.outputs.version }}-Mac.zip"
 
   build-linux:
     runs-on: ubuntu-latest
+    needs: setup
     permissions:
       contents: write
     name: Build Flutter App Linux
@@ -121,7 +154,7 @@ jobs:
         id: define-artifact-paths
         run: |
           ARTIFACT_DIR=build/linux/x64/release
-          ARCHIVE_NAME="AndroidSideloader-${{ github.ref_name }}-Linux.zip"
+          ARCHIVE_NAME="AndroidSideloader-${{ needs.setup.outputs.version }}-Linux.zip"
           echo "ARTIFACT_DIR=$ARTIFACT_DIR" >> $GITHUB_ENV
           echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> $GITHUB_ENV
 
@@ -156,12 +189,9 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
+    needs: [setup, build-windows, build-macos, build-linux]
     permissions:
       contents: write
-    needs:
-      - build-windows
-      - build-macos
-      - build-linux
     name: Create GitHub Release
     steps:
       - name: Checkout Repository
@@ -171,7 +201,7 @@ jobs:
         id: extract_changelog
         run: |
           chmod +x scripts/get-release-notes.sh
-          ReleaseNotes=$(scripts/get-release-notes.sh "${{ github.ref_name }}")
+          ReleaseNotes=$(scripts/get-release-notes.sh "${{ needs.setup.outputs.version }}")
           if [ $? -ne 0 ]; then
               echo "Failed to create ReleaseNotes.md" >&2
               exit 1
@@ -183,32 +213,32 @@ jobs:
       - name: Download Windows Portable
         uses: actions/download-artifact@v4
         with:
-          name: AndroidSideloader-${{ github.ref_name }}-Windows-Portable.zip
+          name: AndroidSideloader-${{ needs.setup.outputs.version }}-Windows-Portable.zip
           path: windows-artifacts
 
       - name: Download Windows Installer
         uses: actions/download-artifact@v4
         with:
-          name: AndroidSideloader-${{ github.ref_name }}-Windows-Installer.exe
+          name: AndroidSideloader-${{ needs.setup.outputs.version }}-Windows-Installer.exe
           path: windows-artifacts
 
       - name: Download macOS Build
         uses: actions/download-artifact@v4
         with:
-          name: AndroidSideloader-${{ github.ref_name }}-Mac.zip
+          name: AndroidSideloader-${{ needs.setup.outputs.version }}-Mac.zip
           path: macos-artifacts
 
       - name: Download Linux Build
         uses: actions/download-artifact@v4
         with:
-          name: AndroidSideloader-${{ github.ref_name }}-Linux.zip
+          name: AndroidSideloader-${{ needs.setup.outputs.version }}-Linux.zip
           path: linux-artifacts
 
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
-          tag: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          tag: ${{ needs.setup.outputs.version }}
+          name: Release ${{ needs.setup.outputs.version }}
           replacesArtifacts: true
           prerelease: false
           artifactErrorsFailBuild: true

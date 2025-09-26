@@ -1,0 +1,216 @@
+name: Build Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    name: Build Flutter App Windows
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Define Artifact Paths
+        id: define-artifact-paths
+        run: |
+          $runner="build/windows/x64/runner"
+          $artifacts="$runner/Artifacts"
+          $build="$runner/Release/"
+          $artifactName="AndroidSideloader-${{ github.ref_name }}"
+          $archiveName="$artifactName-Windows-Portable.zip"
+          $archive="$artifacts/$archiveName"
+          $installerName="$artifactName-Windows-Installer.exe"
+          $installer="$artifacts/$installerName"
+          echo "BUILD_DIR_PATH=$build" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "ARCHIVE_NAME=$archiveName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "ARCHIVE_PATH=$archive" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "INSTALLER_NAME=$installerName" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "INSTALLER_PATH=$installer" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2.18.0
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build for Windows
+        run: flutter build windows
+
+      - name: Compile .ISS to .EXE Installer
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
+        with:
+          path: installer.iss
+          options:  /O+ /DMyAppVersion="${{ github.ref_name }}"
+
+      - name: Compress Build Directory
+        run: |
+          Compress-Archive -Path "${{ env.BUILD_DIR_PATH }}\*" -DestinationPath "${{ env.ARCHIVE_PATH }}"
+
+      - name: Upload Build Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARCHIVE_NAME }}
+          path: ${{ env.ARCHIVE_PATH }}
+
+      - name: Upload Installer Executable as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.INSTALLER_NAME }}
+          path: ${{ env.INSTALLER_PATH }}
+
+  build-macos:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    name: Build Flutter App macOS
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Define Artifact Paths
+        id: define-artifact-paths
+        run: |
+          ARTIFACT_DIR=build/macos/Build/Products/Release
+          ARCHIVE_NAME="${{ github.ref_name }}-macOS.zip"
+          echo "ARTIFACT_DIR=$ARTIFACT_DIR" >> $GITHUB_ENV
+          echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> $GITHUB_ENV
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2.18.0
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build macOS App
+        run: flutter build macos --release
+
+      - name: Package macOS Build
+        run: |
+          cd build/macos/Build/Products/Release
+          zip -r "AndroidSideloader-${{ github.ref_name }}-Mac.zip" "Android Sideloader.app/"
+
+      - name: Upload Build Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "AndroidSideloader-${{ github.ref_name }}-Mac.zip"
+          path: "build/macos/Build/Products/Release/AndroidSideloader-${{ github.ref_name }}-Mac.zip"
+
+  build-linux:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    name: Build Flutter App Linux
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Define Artifact Paths
+        id: define-artifact-paths
+        run: |
+          ARTIFACT_DIR=build/linux/x64/release
+          ARCHIVE_NAME="AndroidSideloader-${{ github.ref_name }}-Linux.zip"
+          echo "ARTIFACT_DIR=$ARTIFACT_DIR" >> $GITHUB_ENV
+          echo "ARCHIVE_NAME=$ARCHIVE_NAME" >> $GITHUB_ENV
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2.18.0
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Build Linux App
+        run: flutter build linux --release
+
+      - name: Package Linux Build
+        run: |
+          cd ${{ env.ARTIFACT_DIR }}
+          zip -r "${{ env.ARCHIVE_NAME }}" bundle/*
+
+      - name: Upload Build Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ env.ARCHIVE_NAME }}"
+          path: "${{ env.ARTIFACT_DIR }}/${{ env.ARCHIVE_NAME }}"
+
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs:
+      - build-windows
+      - build-macos
+      - build-linux
+    name: Create GitHub Release
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Extract Release Notes
+        id: extract_changelog
+        run: |
+          chmod +x scripts/get-release-notes.sh
+          ReleaseNotes=$(scripts/get-release-notes.sh "${{ github.ref_name }}")
+          if [ $? -ne 0 ]; then
+              echo "Failed to create ReleaseNotes.md" >&2
+              exit 1
+          fi
+          echo "$ReleaseNotes" > ./ReleaseNotes.md
+          echo "Release Notes:"
+          cat ./ReleaseNotes.md
+
+      - name: Download Windows Portable
+        uses: actions/download-artifact@v4
+        with:
+          name: AndroidSideloader-${{ github.ref_name }}-Windows-Portable.zip
+          path: windows-artifacts
+
+      - name: Download Windows Installer
+        uses: actions/download-artifact@v4
+        with:
+          name: AndroidSideloader-${{ github.ref_name }}-Windows-Installer.exe
+          path: windows-artifacts
+
+      - name: Download macOS Build
+        uses: actions/download-artifact@v4
+        with:
+          name: AndroidSideloader-${{ github.ref_name }}-Mac.zip
+          path: macos-artifacts
+
+      - name: Download Linux Build
+        uses: actions/download-artifact@v4
+        with:
+          name: AndroidSideloader-${{ github.ref_name }}-Linux.zip
+          path: linux-artifacts
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          replacesArtifacts: true
+          prerelease: false
+          artifactErrorsFailBuild: true
+          bodyFile: "ReleaseNotes.md"
+          artifacts: "windows-artifacts/*,macos-artifacts/*,linux-artifacts/*"

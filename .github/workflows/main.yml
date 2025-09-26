@@ -83,11 +83,85 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path "build\windows\x64\runner\Artifacts"
 
+      - name: Install Inno Setup
+        run: |
+          # Download and install Inno Setup
+          Write-Host "Downloading Inno Setup..."
+          Invoke-WebRequest -Uri "https://files.jrsoftware.org/is/6/innosetup-6.2.2.exe" -OutFile "innosetup.exe"
+          Write-Host "Installing Inno Setup..."
+          Start-Process -FilePath "innosetup.exe" -ArgumentList "/VERYSILENT", "/NORESTART" -Wait
+          
+          # Give installation time to complete
+          Start-Sleep -Seconds 5
+          
+          # Check installation paths
+          $found = $false
+          $possiblePaths = @(
+            "C:\Program Files (x86)\Inno Setup 6\ISCC.exe",
+            "C:\Program Files\Inno Setup 6\ISCC.exe"
+          )
+          foreach ($path in $possiblePaths) {
+            if (Test-Path $path) {
+              Write-Host "Found ISCC.exe at: $path"
+              $found = $true
+            }
+          }
+          
+          if (-not $found) {
+            Write-Host "Installation may not have completed successfully. Checking all Program Files..."
+            Get-ChildItem "C:\Program Files" -Name | Where-Object { $_ -like "*Inno*" }
+            Get-ChildItem "C:\Program Files (x86)" -Name | Where-Object { $_ -like "*Inno*" }
+          }
+
       - name: Compile .ISS to .EXE Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
-        with:
-          path: installer.iss
-          options:  /O+ /DMyAppVersion="${{ needs.setup.outputs.clean_version }}"
+        run: |
+          # Debug: Check current directory and file existence
+          Write-Host "Current directory: $(Get-Location)"
+          Write-Host "Files in current directory:"
+          Get-ChildItem -Name
+          Write-Host "Checking installer.iss exists: $(Test-Path installer.iss)"
+          Write-Host "Checking LICENSE exists: $(Test-Path LICENSE)"
+          Write-Host "Checking icon exists: $(Test-Path assets\icon.ico)"
+          Write-Host "Checking build directory exists: $(Test-Path build\windows\x64\runner\Release)"
+          Write-Host "Checking artifacts directory exists: $(Test-Path build\windows\x64\runner\Artifacts)"
+          
+          # Find ISCC.exe
+          $isccPath = ""
+          $possiblePaths = @(
+            "C:\Program Files (x86)\Inno Setup 6\ISCC.exe",
+            "C:\Program Files\Inno Setup 6\ISCC.exe"
+          )
+          foreach ($path in $possiblePaths) {
+            if (Test-Path $path) {
+              $isccPath = $path
+              Write-Host "Using ISCC.exe from: $path"
+              break
+            }
+          }
+          
+          if (-not $isccPath) {
+            throw "Could not find ISCC.exe in any expected location"
+          }
+          
+          # Compile the installer using Inno Setup
+          Write-Host "Compiling installer with version: ${{ needs.setup.outputs.clean_version }}"
+          try {
+            & $isccPath /O+ /DMyAppVersion="${{ needs.setup.outputs.clean_version }}" installer.iss
+            Write-Host "Inno Setup compilation completed successfully"
+            
+            # Verify the installer was created
+            $expectedInstaller = "build\windows\x64\runner\Artifacts\AndroidSideloader-${{ needs.setup.outputs.clean_version }}-Windows-Installer.exe"
+            if (Test-Path $expectedInstaller) {
+              Write-Host "Installer created successfully: $expectedInstaller"
+            } else {
+              Write-Host "Warning: Expected installer not found at $expectedInstaller"
+              Write-Host "Contents of Artifacts directory:"
+              Get-ChildItem "build\windows\x64\runner\Artifacts" -Name
+            }
+          } catch {
+            Write-Host "Inno Setup compilation failed with error: $_"
+            throw
+          }
 
       - name: Compress Build Directory
         run: |

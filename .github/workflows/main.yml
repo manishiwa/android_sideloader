@@ -82,7 +82,17 @@ jobs:
       - name: Create Artifacts Directory
         run: |
           New-Item -ItemType Directory -Force -Path "build\windows\x64\runner\Artifacts"
-
+          
+      - name: Verify installer.iss exists
+        run: |
+          if (Test-Path "installer.iss") {
+            Write-Host "installer.iss found"
+            Get-Content installer.iss | Select-Object -First 20
+          } else {
+            Write-Host "installer.iss NOT found"
+            Get-ChildItem -Path . -Name
+          }
+          
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:

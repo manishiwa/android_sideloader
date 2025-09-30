@@ -92,6 +92,32 @@ jobs:
             Write-Host "installer.iss NOT found"
             Get-ChildItem -Path . -Name
           }
+      - name: Verify Required Files for Installer
+        run: |
+          Write-Host "Verifying all files required by installer.iss..."
+          $files = @(
+            "LICENSE",
+            "assets\icon.ico",
+            "build\windows\x64\runner\Release\android_sideloader.exe"
+          )
+          $allExist = $true
+          foreach ($file in $files) {
+            if (Test-Path $file) {
+              Write-Host "✓ Found: $file"
+            } else {
+              Write-Host "✗ MISSING: $file" -ForegroundColor Red
+              $allExist = $false
+            }
+          }
+          if (-not $allExist) {
+            Write-Host "`nShowing repository root contents:" -ForegroundColor Yellow
+            Get-ChildItem -Path . -Force | Format-Table Name, Mode
+            Write-Host "`nShowing assets directory (if exists):" -ForegroundColor Yellow
+            if (Test-Path "assets") {
+              Get-ChildItem -Path "assets" | Format-Table Name
+            }
+            exit 1
+          }    
           
       - name: Compile .ISS to .EXE Installer
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5

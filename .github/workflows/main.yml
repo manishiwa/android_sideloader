@@ -119,11 +119,23 @@ jobs:
             exit 1
           }    
           
-      - name: Compile .ISS to .EXE Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
-        with:
-          path: installer.iss
-          options: /DMyAppVersion="${{ needs.setup.outputs.clean_version }}"
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup -y
+      
+      - name: Compile Installer with Inno Setup
+        run: |
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            Write-Host "Searching for ISCC.exe..."
+            $iscc = Get-ChildItem -Path "C:\Program Files*" -Recurse -Filter "ISCC.exe" -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+          }
+          Write-Host "Using ISCC at: $iscc"
+          & $iscc /DMyAppVersion="${{ needs.setup.outputs.clean_version }}" installer.iss
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host "Inno Setup compilation failed with exit code $LASTEXITCODE"
+            exit 1
+          }
 
       - name: Compress Build Directory
         run: |

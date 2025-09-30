@@ -97,7 +97,7 @@ jobs:
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.5
         with:
           path: installer.iss
-          options: /O"build\windows\x64\runner\Artifacts" /DMyAppVersion="${{ needs.setup.outputs.clean_version }}"
+          options: /DMyAppVersion="${{ needs.setup.outputs.clean_version }}"
 
       - name: Compress Build Directory
         run: |
